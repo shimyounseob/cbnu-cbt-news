@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기자 정보 관리</title>
+</head>
+
+<body>
+    <!-- 우측 상단 헤더 영역 -->
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>기자 정보 관리</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="/Home/Index">Home</a>>
+                </li>
+                <li>
+                    <a>기자 정보 관리</a>>
+                </li>
+                <li class="active">
+                    <strong>조회</strong>
+                </li>
+            </ol>
+        </div>
+        <div class="col-lg-2"></div>
+    </div>
+
+    <!-- 우측 콘텐츠 영역 -->
+    <div class="wrapper wrapper-content">
+
+        <!-- 조회 옵션 영역 -->
+        <form action="/writer/list" method="post">
+            <div class="ibox-content m-b-sm border-bottom">
+                <div class="row">
+
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="control-label" for="use_yn_code">사용여부</label>
+                            <select id="use_yn_code" name="use_yn_code" class="form-control">
+                                <option value="9" <%=searchOption.use_yn_code=="9" ? 'selected' : '' %> >전체</option>
+                                <option value="1" <%=searchOption.use_yn_code=="1" ? 'selected' : '' %> >사용중</option>
+                                <option value="0" <%=searchOption.use_yn_code=="0" ? 'selected' : '' %> >미사용</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="control-label" for="name">기자 이름</label>
+                            <input type="text" id="korean_name" name="korean_name" class="form-control"
+                                placeholder="기자 이름을 입력하세요" value="<%= searchOption ? searchOption.korean_name : '' %>">
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">조회</button>
+                    <a href="/writer/create" class="btn btn-info">신규 기자 등록</a>
+                </div>
+            </div>
+        </form>
+
+        <!-- 조회 결과 목록 영역 -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                            <!-- 스크롤을 위한 CSS 적용 -->
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>기자 한글명</th>
+                                        <th>기자 영문명</th>
+                                        <th>이메일</th>
+                                        <th>학과</th>
+                                        <th>학번</th>
+                                        <th>등록자</th>
+                                        <th>등록일</th>
+                                        <th width="8%">사용여부</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="hoverTblBody">
+                                    <% writers.forEach(function(writer) { %>
+                                        <tr>
+                                            <td><a href="/writer/modify/<%= writer.id %>">
+                                                    <%= writer.korean_name %>
+                                                </a></td>
+                                            <td>
+                                                <%= writer.english_name || 'N/A' %>
+                                            </td>
+                                            <td>
+                                                <%= writer.email || 'N/A' %>
+                                            </td>
+                                            <td>
+                                                <%= writer.department || 'N/A' %>
+                                            </td>
+                                            <td>
+                                                <%= writer.student_number || 'N/A' %>
+                                            </td>
+                                            <td>
+                                                <%= writer.created_by %>
+                                            </td>
+                                            <td>
+                                                <%= moment(writer.created_at).format('YYYY-MM-DD HH:mm') %>
+                                            </td>
+                                            <td>
+                                                <% if(writer.used_yn_code==1){ %>
+                                                    사용중
+                                                    <% }else{ %>
+                                                        미사용
+                                                        <% } %>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

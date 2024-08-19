@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 정보 관리</title>
+
+    <!-- 검색엔진 최적화 메타태그 -->
+    <meta name="description" content="게시글 정보 등록 웹페이지">
+
+    <!-- CKEditor CDN -->
+    <script src="https://cdn.ckeditor.com/4.16.2/full/ckeditor.js"></script>
+
+    <style>
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .sub-writer-group {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .sub-writer-group select {
+            margin-right: 10px;
+        }
+
+        .control-label+.btn-secondary {
+            margin-left: 10px;
+        }
+
+        /* #cke_187_uiElement {
+            margin-top: 80px;
+        } */
+    </style>
+</head>
+
+<body>
+    <!--우측 콘텐츠 헤더영역 -->
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>게시글 정보 관리</h2>
+            <ol class="breadcrumb">
+                <li><a href="/Home/Index">Home</a></li>
+                <li><a>게시글 정보 관리</a></li>
+                <li class="active"><strong>신규 게시글 작성</strong></li>
+            </ol>
+        </div>
+        <div class="col-lg-2"></div>
+    </div>
+
+    <!--우측 콘텐츠 영역 -->
+    <div class="wrapper wrapper-content">
+        <form id="createForm" action="/article/create" method="post">
+            <div class="ibox-content m-b-sm border-bottom">
+
+                <!-- 카테고리 영역 -->
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">카테고리</label>
+                            <select class="form-control" id="category" name="category" onchange="updateSubcategories()">
+                                <option value="Campus News">Campus News</option>
+                                <option value="Social Issue">Social Issue</option>
+                                <option value="Culture">Culture</option>
+                                <option value="Column">Column</option>
+                                <option value="Photo">Photo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">세부 카테고리</label>
+                            <select class="form-control" id="subcategory" name="subcategory">
+                                <!-- 서브 카테고리는 JavaScript를 통해 동적으로 변경됩니다. -->
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 발간호 & 기자 선택 영역 -->
+                <div class="row">
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">메인 기자</label>
+                            <select class="form-control" id="main_writer" name="main_writer">
+                                <!-- 서버에서 전달된 기자 목록을 기반으로 옵션 생성 -->
+                                <% writers.forEach(function(writer) { %>
+                                    <option value="<%= writer.id %>">
+                                        <%= writer.english_name %>
+                                    </option>
+                                    <% }); %>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">발간호</label>
+                            <input type="text" name="publication_issue" class="form-control" value=""
+                                placeholder="숫자로 작성해주세요" required>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">서브 기자</label>
+                            <button type="button" class="btn btn-primary btn-sm" id="addSubWriter">+ 추가</button>
+                            <div id="sub_writers"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 글제목영역 -->
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="control-label">글제목</label>
+                        <input type="text" id="title" name="title" class="form-control"required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 글내용영역 -->
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="control-label">글내용</label>
+                        <textarea class="form-control" id="content" name="content" rows="10" cols="10"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 저장 목록 영역 -->
+            <div class="row">
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">저장</button>
+                    <a href="/article/list" class="btn btn-info">목록</a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <script>
+        console.log("Initializing CKEditor...");
+        // CKEditor 초기화 시 스타일을 직접 삽입
+        CKEDITOR.replace('content', {
+            height: 800, // 에디터의 높이를 800px로 설정
+            extraPlugins: 'uploadimage', // 이미지 업로드 플러그인 추가
+            filebrowserUploadUrl: '/article/upload_image', // 이미지 업로드 처리 엔드포인트 설정
+            filebrowserUploadMethod: 'form', // 이미지 업로드 방식을 폼 전송으로 설정
+            on: {
+                // CKEditor에서 이미지 업로드 대화 상자가 열릴 때 호출되는 이벤트 핸들러
+                dialogShow: function (ev) {
+                    var dialog = ev.data;
+
+                    // iframe 스타일 조정 (업로드 폼의 크기를 조정)
+                    var iframe = dialog.parts.contents.$.querySelector('iframe.cke_dialog_ui_input_file');
+                    if (iframe) {
+                        iframe.style.height = '200px'; // iframe 높이를 200px로 설정
+                        iframe.style.width = '100%'; // iframe 너비를 100%로 설정
+                    }
+
+                    // "서버로 전송" 버튼에 마진 80px 적용 (버튼의 위치를 아래로 조정)
+                    var uploadButton = dialog.parts.contents.$.querySelector('.cke_dialog_ui_fileButton');
+                    if (uploadButton) {
+                        uploadButton.style.marginTop = '80px'; // 버튼에 상단 마진 80px 적용
+                    }
+                },
+            }
+        });
+
+
+        // 카테고리와 연동된 세부 카테고리 데이터
+        const subcategories = {
+            "Campus News": ["Campus Main","Campus News"],
+            "Social Issue": ["Society", "Global", "Feature"],
+            "Culture": ["Culture", "People", "Experience"],
+            "Column": ["Column"],
+            "Photo": ["Photo", "Cartoon"]
+        };
+
+        // 카테고리 선택에 따라 세부 카테고리 옵션을 업데이트
+        function updateSubcategories() {
+            console.log("Updating subcategories...");
+            const categorySelect = document.getElementById("category");
+            const subcategorySelect = document.getElementById("subcategory");
+            const selectedCategory = categorySelect.value;
+
+            // 서브 카테고리 옵션을 초기화
+            subcategorySelect.innerHTML = "";
+
+            // 선택된 카테고리에 맞는 서브 카테고리를 추가
+            subcategories[selectedCategory].forEach(sub => {
+                const option = document.createElement("option");
+                option.value = sub;
+                option.textContent = sub;
+                subcategorySelect.appendChild(option);
+            });
+            console.log("Subcategories updated:", subcategorySelect.innerHTML);
+        }
+
+        // 페이지 로드 시 서브 카테고리 초기화
+        updateSubcategories();
+
+        // 서브 기자 추가 버튼 클릭 시 새로운 기자 선택 옵션 추가
+        document.getElementById('addSubWriter').addEventListener('click', function () {
+            console.log("Adding a new sub-writer...");
+            var subWriterGroup = document.createElement('div');
+            subWriterGroup.className = 'sub-writer-group';
+            subWriterGroup.innerHTML = `
+                <select class="form-control" name="sub_writers[]">
+                    <% writers.forEach(function(writer) { %>
+                        <option value="<%= writer.id %>"><%= writer.english_name %></option>
+                    <% }); %>
+                </select>
+                <button type="button" class="btn btn-danger removeSubWriter">-</button>
+            `;
+            document.getElementById('sub_writers').appendChild(subWriterGroup);
+            console.log("New sub-writer added:", subWriterGroup);
+
+            // 새롭게 추가된 삭제 버튼에 이벤트 리스너 추가
+            subWriterGroup.querySelector('.removeSubWriter').addEventListener('click', function () {
+                subWriterGroup.remove();
+                console.log("Sub-writer removed");
+            });
+        });
+    </script>
+</body>
+
+</html>

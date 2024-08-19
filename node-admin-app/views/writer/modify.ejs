@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기자 정보 수정</title>
+</head>
+
+<body>
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>기자 정보 수정</h2>
+            <ol class="breadcrumb">
+                <li><a href="/Home/Index">Home</a></li>
+                <li><a>기자 정보 관리</a></li>
+                <li class="active"><strong>기자 정보 수정</strong></li>
+            </ol>
+        </div>
+        <div class="col-lg-2"></div>
+    </div>
+
+    <div class="wrapper wrapper-content">
+        <!-- enctype="multipart/form-data"는 파일 업로드를 위한 필수 설정 -->
+        <form method="post" action="/writer/modify" enctype="multipart/form-data">
+            <input type="hidden" name="id" value="<%= writer.id %>" />
+            <div class="ibox-content m-b-sm border-bottom">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">기자 한글명</label>
+                            <input type="text" name="korean_name" placeholder="기자 한글명을 입력하세요"
+                                value="<%= writer.korean_name %>" required class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">기자 영문명</label>
+                            <input type="text" name="english_name" placeholder="기자 영문명을 입력하세요"
+                                value="<%= writer.english_name %>" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">이메일</label>
+                            <input type="email" name="email" placeholder="example@example.com"
+                                value="<%= writer.email %>" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">학과</label>
+                            <input type="text" name="department" placeholder="학과를 입력하세요"
+                                value="<%= writer.department %>" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">학번</label>
+                            <input type="text" name="student_number" placeholder="학번을 입력하세요"
+                                value="<%= writer.student_number %>" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="control-label">사용 여부</label>
+                            <select id="used_yn_code" name="used_yn_code" class="form-control" required>
+                                <option value="1">사용함</option>
+                                <option value="0">사용안함</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">기자 사진 업로드</label>
+                            <input type="file" name="photo" class="form-control" id="photoInput" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 text-left">
+                        <div class="form-group">
+                            <% if (writer.photo) { %>
+                                <p>현재 사진:</p>
+                                <img id="photoPreview" src="/uploads/writer/<%= writer.photo %>" alt="기자 사진"
+                                    style="max-width: 200px;">
+                                <% } else { %>
+                                    <p>현재 사진:</p>
+                                    <img id="photoPreview" src="#" alt="기자 사진" style="max-width: 200px; display: none;">
+                                    <% } %>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">수정</button>
+                    <button type="button" id="btnDelete" class="btn btn-danger">삭제</button>
+                    <a href="/writer/list" class="btn btn-info">목록</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('photoInput').addEventListener('change', function (event) {
+            const photoPreview = document.getElementById('photoPreview');
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    photoPreview.src = e.target.result;
+                    photoPreview.style.display = 'block';  // 사진을 화면에 표시
+                }
+                reader.readAsDataURL(file);
+            } else {
+                photoPreview.src = '#';
+                photoPreview.style.display = 'none';  // 파일이 선택되지 않으면 미리보기를 숨김
+            }
+        });
+
+        $("#btnDelete").click(function(){
+        if(confirm('정말로 삭제하시겠습니까?')){
+           location.href="/writer/delete?id=<%=writer.id%>"; 
+        }
+    });
+
+    </script>
+
+
+</body>
+
+</html>

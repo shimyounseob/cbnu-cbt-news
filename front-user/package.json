@@ -1,0 +1,38 @@
+{
+  "name": "banter-next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
+    "axios": "^1.7.4",
+    "clsx": "^2.0.0",
+    "contentlayer": "^0.3.4",
+    "date-fns": "^2.30.0",
+    "html-react-parser": "^5.1.12",
+    "next": "^13.5.2",
+    "next-contentlayer": "^0.3.4",
+    "next-share": "^0.25.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^1.14.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/typography": "^0.5.10",
+    "autoprefixer": "^10.4.15",
+    "eslint": "^8.43.0",
+    "eslint-config-next": "^13.5.2",
+    "eslint-config-prettier": "^9.0.0",
+    "postcss": "^8.4.30",
+    "prettier": "^3.0.3",
+    "prettier-plugin-tailwindcss": "^0.5.4",
+    "tailwindcss": "^3.3.3"
+  }
+}
