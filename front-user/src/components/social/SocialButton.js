@@ -8,6 +8,7 @@ const ComponentsMap = {
   facebook: SocialIconsComponent.Facebook,
   instagram: SocialIconsComponent.Instagram,
   linkedin: SocialIconsComponent.Linkedin,
+  kakaotalk: SocialIconsComponent.Kakaotalk,
 }
 
 export function SocialButton({

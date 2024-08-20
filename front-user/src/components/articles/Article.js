@@ -9,13 +9,12 @@ import { Share } from './Share'
 // 본문에서 로컬 이미지를 처리하기 위한 함수 추가
 function processLocalImages(content) {
   return content.replace(/src="(\/uploads\/article\/[^"]+)"/g, (match, p1) => {
-    return `src="http://localhost:5001${p1}"`;
-  });
+    return `src="http://localhost:5001${p1}"`
+  })
 }
 
 export default function Article({ article }) {
-  
-  console.log("Article: ", article);
+  console.log('Article: ', article)
 
   // 본문에서 첫 번째 이미지를 추출함
   const firstImageMatch = article.content.match(/<img[^>]*src="(.*?)"[^>]*\/?>/)
@@ -43,7 +42,7 @@ export default function Article({ article }) {
     : article.content
 
   // 본문 내 로컬 이미지 경로를 처리
-  const processedContent = processLocalImages(contentWithoutFirstImage);
+  const processedContent = processLocalImages(contentWithoutFirstImage)
 
   return (
     <article className="bg-gray-50 pb-12 sm:pb-16 lg:pb-24">
@@ -109,7 +108,7 @@ export default function Article({ article }) {
                   // 작성자 이름을 표시하고, 마지막이 아니면 쉼표를 추가함
                   <Link
                     key={index}
-                    href="#"
+                    href={`/writers/${writer.id}`}
                     className="font-medium text-gray-700 hover:underline"
                   >
                     {writer.english_name}
@@ -144,35 +143,35 @@ export default function Article({ article }) {
             <div className="flex w-full items-center justify-between">
               <div className="flex flex-col sm:flex-row">
                 <div className="flex-shrink-0">
-                  <div className="relative h-20 w-20 rounded-2xl bg-gray-100 sm:h-24 sm:w-24">
-                    <Image
-                      className="rounded-2xl object-cover object-center"
-                      // 메인 기자의 사진을 표시함
-                      src={mainWriterPhoto}
-                      alt={article.writer[0].english_name}
-                      fill
-                      sizes="(min-width: 640px) 6rem, 5rem"
-                    />
-                    <span
-                      className="absolute inset-0 rounded-2xl shadow-inner"
-                      aria-hidden="true"
-                    />
-                  </div>
+                  <Link href={`/writers/${article.writer[0].id}`}>
+                    <div className="relative h-20 w-20 rounded-2xl bg-gray-100 sm:h-24 sm:w-24">
+                      <Image
+                        className="rounded-2xl object-cover object-center"
+                        src={mainWriterPhoto}
+                        alt={article.writer[0].english_name}
+                        fill
+                        sizes="(min-width: 640px) 6rem, 5rem"
+                      />
+                      <span
+                        className="absolute inset-0 rounded-2xl shadow-inner"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </Link>
                 </div>
 
                 <div className="mt-5 text-left sm:ml-6 sm:mt-0">
                   <div className="flex items-center justify-between">
                     <div className="'flex flex-col">
                       <p className="text-xs uppercase tracking-widest text-red-600">
-                        {/* 메인 기자의 역할을 표시함 */}
                         {article.writer[0].article_writers.role}
                       </p>
-                      <h1 className="mt-1 text-xl font-medium tracking-normal text-gray-900 md:tracking-tight lg:leading-tight">
-                        {/* 메인 기자의 이름을 표시함 */}
-                        {article.writer[0].english_name}
-                      </h1>
+                      <Link href={`/writers/${article.writer[0].id}`}>
+                        <h1 className="mt-1 text-xl font-medium tracking-normal text-gray-900 md:tracking-tight lg:leading-tight">
+                          {article.writer[0].english_name}
+                        </h1>
+                      </Link>
                       <p className="mt-2.5 text-base leading-loose text-gray-500">
-                        {/* 메인 기자의 이메일 주소를 표시함 */}
                         {article.writer[0].email}
                       </p>
                     </div>
@@ -187,19 +186,21 @@ export default function Article({ article }) {
                 <div className="flex w-full items-center justify-between">
                   <div className="flex flex-col sm:flex-row">
                     <div className="flex-shrink-0">
-                      <div className="relative h-20 w-20 rounded-2xl bg-gray-100 sm:h-24 sm:w-24">
-                        <Image
-                          className="rounded-2xl object-cover object-center"
-                          src={`http://localhost:5001/uploads/writer/${writer.photo}`}
-                          alt={writer.english_name}
-                          fill
-                          sizes="(min-width: 640px) 6rem, 5rem"
-                        />
-                        <span
-                          className="absolute inset-0 rounded-2xl shadow-inner"
-                          aria-hidden="true"
-                        />
-                      </div>
+                      <Link href={`/writers/${writer.id}`}>
+                        <div className="relative h-20 w-20 rounded-2xl bg-gray-100 sm:h-24 sm:w-24">
+                          <Image
+                            className="rounded-2xl object-cover object-center"
+                            src={`http://localhost:5001/uploads/writer/${writer.photo}`}
+                            alt={writer.english_name}
+                            fill
+                            sizes="(min-width: 640px) 6rem, 5rem"
+                          />
+                          <span
+                            className="absolute inset-0 rounded-2xl shadow-inner"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      </Link>
                     </div>
 
                     <div className="mt-5 text-left sm:ml-6 sm:mt-0">
@@ -208,11 +209,12 @@ export default function Article({ article }) {
                           <p className="text-xs uppercase tracking-widest text-red-600">
                             {writer.article_writers.role}
                           </p>
-                          <h1 className="mt-1 text-xl font-medium tracking-normal text-gray-900 md:tracking-tight lg:leading-tight">
-                            {writer.english_name}
-                          </h1>
+                          <Link href={`/writers/${writer.id}`}>
+                            <h1 className="mt-1 text-xl font-medium tracking-normal text-gray-900 md:tracking-tight lg:leading-tight">
+                              {writer.english_name}
+                            </h1>
+                          </Link>
                           <p className="mt-2.5 text-base leading-loose text-gray-500">
-                            {/* 서브 기자의 이메일 주소를 표시함 */}
                             {writer.email}
                           </p>
                         </div>

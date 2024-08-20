@@ -38,6 +38,7 @@ router.get("/list",isLoggined, async (req, res, next) => {
             w.email,
             w.department,
             w.student_number,
+            w.position,
             w.photo,
             w.used_yn_code,
             w.created_at,
@@ -74,6 +75,7 @@ router.post("/list",isLoggined, async (req, res) => {
             w.email,
             w.department,
             w.student_number,
+            w.position,
             w.photo,
             w.used_yn_code,
             w.created_at,
@@ -129,6 +131,7 @@ router.post("/create",isLoggined, checkPermission(1), upload.single("photo"), as
     department,
     student_number,
     used_yn_code,
+    position,
   } = req.body;
   const photo = req.file ? req.file.filename : null;
 
@@ -141,6 +144,7 @@ router.post("/create",isLoggined, checkPermission(1), upload.single("photo"), as
     email,
     department,
     student_number,
+    position,
     photo,
     used_yn_code: parseInt(used_yn_code, 10),
     created_by: loginAdminId,
@@ -165,6 +169,7 @@ router.post("/modify",isLoggined, upload.single("photo"), async (req, res, next)
     department,
     student_number,
     used_yn_code,
+    position,
   } = req.body;
   const photo = req.file ? req.file.filename : null;
 
@@ -174,6 +179,7 @@ router.post("/modify",isLoggined, upload.single("photo"), async (req, res, next)
     email,
     department,
     student_number,
+    position,
     used_yn_code: parseInt(used_yn_code, 10),
     updated_by: loginAdminId,
     updated_at: new Date(),

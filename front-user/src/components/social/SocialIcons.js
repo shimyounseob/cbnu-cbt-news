@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export function Twitter(props) {
   return (
     <svg
@@ -16,6 +18,9 @@ export function Twitter(props) {
 }
 
 export function Instagram(props) {
+
+  console.log('Rendering Instagram icon with props:', props);
+  
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -75,6 +80,34 @@ export function GitHub(props) {
       </defs>
     </svg>
   )
+}
+
+export function Kakaotalk(props) {
+  console.log('Rendering Kakaotalk icon with props:', props);
+
+  return (
+    <div
+      style={{
+        width: '24px',
+        height: '24px',
+        borderRadius: '50%',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#FFFFFF' 
+      }}
+      {...props}
+    >
+      <Image
+        src="/images/icons/kakaotalk.png"
+        alt="Kakaotalk"
+        width={24}
+        height={24}
+        style={{ objectFit: 'cover' }}
+      />
+    </div>
+  );
 }
 
 export function Linkedin(props) {

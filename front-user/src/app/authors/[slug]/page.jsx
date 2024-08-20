@@ -4,7 +4,8 @@ import { compareDesc } from 'date-fns'
 import AuthorHeader from '@/components/headers/AuthorHeader'
 import SingleColFeed from '@/components/shared/SingleColFeed'
 import SidebarArticles from '@/components/sidebar/SidebarArticles'
-import SidebarSocialLinks from '@/components/sidebar/SidebarSocialLinks'
+import SidebarArticles from '@/components/sidebar/SidebarArticles'
+import SidebarMostread from '@/components/sidebar/SidebarMostread'
 import SidebarAd from '@/components/sidebar/SidebarAd'
 import SidebarAuthorBio from '@/components/sidebar/SidebarAuthorBio'
 import Pagination from '@/components/shared/Pagination'
@@ -44,21 +45,18 @@ export default async function AuthorPage({ params }) {
           </div>
 
           {/* Sidebar */}
-          <div className="mt-12 w-full space-y-8 sm:mt-16 lg:col-span-1 lg:mt-0">
+          <div cassName="mt-12 w-full space-y-8 sm:mt-16 lg:col-span-1 lg:mt-0">
             <SidebarAuthorBio author={author} />
-            <SidebarArticles
-              articles={popularArticles.slice(0, 4)}
+            <SidebarMostread
               heading="Most read articles"
             />
             <SidebarSocialLinks />
-            <SidebarAd />
           </div>
         </div>
       </section>
-
       <Newsletter />
     </>
   )
 }
 
-export const dynamicParams = false
+// export const dynamicParams = false

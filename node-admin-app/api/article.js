@@ -10,7 +10,7 @@ router.get('/latest-cover-story', async (req, res) => {
             include: [{
                 model: db.Writer,
                 as: 'writer',
-                attributes: ['english_name', 'photo'],
+                attributes: ['english_name', 'photo','id'],
                 through: {
                     where: { role: 'main' } // main 역할을 가진 기자만 포함
                 }
@@ -42,7 +42,7 @@ router.get('/latest-recent-stories', async (req, res) => {
             include: [{
                 model: db.Writer,
                 as: 'writer',
-                attributes: ['english_name', 'photo'],
+                attributes: ['english_name', 'photo','id'],
                 through: {
                     where: { role: 'main' } // main 역할을 가진 기자만 포함
                 }
@@ -102,7 +102,7 @@ router.get('/latest-column-photo', async (req, res) => {
             include: [{
                 model: db.Writer,
                 as: 'writer',
-                attributes: ['english_name', 'photo'], // 기자의 이름과 사진 포함
+                attributes: ['english_name', 'photo','id'], // 기자의 이름과 사진 아이디 포함
                 through: {
                     where: { role: 'main' } // main 역할을 가진 기자만 포함
                 }
@@ -146,7 +146,7 @@ router.get('/most-read-articles', async (req, res) => {
             include: [{
                 model: db.Writer,
                 as: 'writer',
-                attributes: ['english_name', 'photo'], // 기자의 이름과 사진 포함
+                attributes: ['english_name', 'photo', 'id'], // 기자의 이름과 사진 아이드 포함
                 through: {
                     where: { role: 'main' } // main 역할을 가진 기자만 포함
                 }
@@ -174,7 +174,7 @@ router.get('/:id', async (req, res) => {
             include: [{
                 model: db.Writer,
                 as: 'writer', 
-                attributes: ['english_name', 'photo','email'], 
+                attributes: ['english_name', 'photo','email','id'], 
                 through: {
                     model: db.Articlewriter, 
                     attributes: ['role']
@@ -189,6 +189,126 @@ router.get('/:id', async (req, res) => {
         res.json(article);
     } catch (error) {
         console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// 특정 카테고리의 모든 기사를 가져오는 엔드포인트
+router.get('/category/:category', async (req, res) => {
+    try {
+        const { category } = req.params; // 요청 경로에서 카테고리를 추출합니다.
+
+        // 데이터베이스에서 해당 카테고리의 모든 기사를 가져옵니다.
+        const articles = await db.Article.findAll({
+            where: { category }, // category와 일치하는 모든 기사를 찾습니다.
+            include: [{
+                model: db.Writer,
+                as: 'writer',
+                attributes: ['english_name', 'photo','id'], // 기자의 이름과 사진 아이디 포함
+                through: {
+                    where: { role: 'main' } // main 역할을 가진 기자만 포함
+                }
+            }],
+            order: [['publication_issue', 'DESC']], // 최신 발간 순으로 정렬
+        });
+
+        // 기사가 없는 경우 404 에러를 반환합니다.
+        if (articles.length === 0) {
+            return res.status(404).json({ error: 'No articles found in this category' });
+        }
+
+        // 성공적으로 기사를 가져온 경우, 응답으로 기사를 반환합니다.
+        res.json(articles);
+    } catch (error) {
+        console.error(error);
+        // 서버 에러가 발생한 경우 500 에러를 반환합니다.
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// 특정 세부 카테고리의 모든 기사를 가져오는 엔드포인트
+router.get('/subcategory/:subcategory', async (req, res) => {
+    try {
+        const { subcategory } = req.params; // 요청 경로에서 세부 카테고리를 추출합니다.
+
+        // 데이터베이스에서 해당 세부 카테고리의 모든 기사를 가져옵니다.
+        const articles = await db.Article.findAll({
+            where: { subcategory }, // subcategory와 일치하는 모든 기사를 찾습니다.
+            include: [{
+                model: db.Writer,
+                as: 'writer',
+                attributes: ['english_name', 'photo', 'id'], // 기자의 이름과 사진 포함
+                through: {
+                    where: { role: 'main' } // main 역할을 가진 기자만 포함
+                }
+            }],
+            order: [['publication_issue', 'DESC']], // 최신 발간 순으로 정렬
+        });
+
+        // 기사가 없는 경우 404 에러를 반환합니다.
+        if (articles.length === 0) {
+            return res.status(404).json({ error: 'No articles found in this subcategory' });
+        }
+
+        // 성공적으로 기사를 가져온 경우, 응답으로 기사를 반환합니다.
+        res.json(articles);
+    } catch (error) {
+        console.error(error);
+        // 서버 에러가 발생한 경우 500 에러를 반환합니다.
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// 메인 또는 서브 기자로 작성한 모든 기사 가져오기
+router.get('/writer/:writerId', async (req, res) => {
+    const { writerId } = req.params;
+
+    try {
+        const articles = await db.Article.findAll({
+            include: [{
+                model: db.Writer,
+                as: 'writer',
+                where: { id: writerId }, // 주어진 writerId와 일치하는 기자만 포함
+                attributes: ['english_name', 'photo', 'email','department','position','id'], // 기자의 정보 포함
+                through: {
+                    attributes: ['role'], // 기자 역할 (메인 또는 서브)
+                }
+            }],
+            order: [['publication_issue', 'DESC']], // 최신 발간 순으로 정렬
+        });
+
+        if (articles.length === 0) {
+            return res.status(404).json({ error: 'No articles found for this writer' });
+        }
+
+        res.json(articles); // 가져온 기사들을 응답으로 반환
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// 특정 기자의 정보를 가져오는 엔드포인트
+router.get('/writer-info/:writerId', async (req, res) => {
+    const { writerId } = req.params; // 요청 경로에서 기자 ID를 추출합니다.
+
+    try {
+        // 데이터베이스에서 해당 기자의 정보를 가져옵니다.
+        const writer = await db.Writer.findOne({
+            where: { id: writerId }, // 주어진 writerId와 일치하는 기자만 포함
+            attributes: ['english_name', 'photo', 'email', 'department', 'position', 'id'], // 필요한 기자 정보 필드만 포함
+        });
+
+        // 기자 정보가 없는 경우 404 에러를 반환합니다.
+        if (!writer) {
+            return res.status(404).json({ error: 'Writer not found' });
+        }
+
+        // 성공적으로 기자 정보를 가져온 경우, 응답으로 반환합니다.
+        res.json(writer);
+    } catch (error) {
+        console.error(error);
+        // 서버 에러가 발생한 경우 500 에러를 반환합니다.
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });

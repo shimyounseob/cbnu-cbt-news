@@ -5,7 +5,7 @@ import { ChevronRightIcon, HomeIcon } from '@heroicons/react/20/solid'
 
 export default function TopicHeader({ item, type }) {
   return (
-    <section className="bg-gray-50 py-12 sm:py-20 lg:py-24">
+    <section className="bg-gray-50 py-12 sm:py-20 lg:py-24" style={{ paddingBottom: "50px" }}>
       <div className="mx-auto max-w-xl px-4 sm:px-12 md:max-w-3xl lg:max-w-screen-xl lg:px-8">
         <div className="flex w-full flex-col items-center md:flex-row md:justify-between">
           <div
@@ -61,7 +61,7 @@ export default function TopicHeader({ item, type }) {
                   className="group flex items-center leading-[1.125rem] text-gray-500 no-underline transition duration-300 ease-in-out hover:text-gray-900 hover:no-underline"
                 >
                   <HomeIcon className="mr-2 h-[1.125rem] w-[1.125rem] flex-shrink-0 text-gray-400 transition duration-300 ease-in-out group-hover:text-gray-500" />
-                  Banter
+                  The Chungbuk Times
                 </Link>
               </span>
 

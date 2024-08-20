@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { FaKakao } from 'react-icons/fa'
 import { ArrowSmallRightIcon } from '@heroicons/react/20/solid'
 
 import socialLinks from '@/config/social.js'

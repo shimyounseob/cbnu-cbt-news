@@ -70,7 +70,7 @@ function CoverStory({ article }) {
                 {`${article.content
                   .replace(/<[^>]+>/g, '') // HTML 태그 제거
                   .replace(/&[^;]+;/g, ' ') // HTML 엔티티 제거 (예: &nbsp;, &amp;)
-                  .slice(0, 250)}...`}{' '}
+                  .slice(0, 250)}...`}{' '}r
                 {/* 텍스트의 첫 150자만 표시 */}
               </p>
             </p>

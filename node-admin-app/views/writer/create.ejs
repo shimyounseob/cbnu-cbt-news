@@ -25,7 +25,7 @@
         <form method="post" action="/writer/create" enctype="multipart/form-data">
             <div class="ibox-content m-b-sm border-bottom">
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             <label class="control-label">기자 한글명</label>
                             <input type="text" name="korean_name" placeholder="기자 한글명을 입력하세요" required
@@ -33,38 +33,51 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             <label class="control-label">기자 영문명</label>
                             <input type="text" name="english_name" placeholder="기자 영문명을 입력하세요" class="form-control" />
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             <label class="control-label">이메일</label>
                             <input type="email" name="email" class="form-control" placeholder="example@example.com"
                                 required>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             <label class="control-label">학과</label>
                             <input type="text" name="department" placeholder="학과를 입력하세요" class="form-control" />
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             <label class="control-label">학번</label>
                             <input type="text" name="student_number" placeholder="학번을 입력하세요" class="form-control" />
                         </div>
                     </div>
+
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="control-label">기자 직책</label>
+                            <select id="position" name="position" class="form-control" required>
+                                <option value="Junior Reporter">Junior Reporter</option>
+                                <option value="Staff Reporter">Staff Reporter</option>
+                                <option value="Deputy Editor">Deputy Editor</option>
+                                <option value="Editor-in-Chief">Editor-in-Chief</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
 
                     <div class="col-sm-4">
                         <div class="form-group">
@@ -75,10 +88,8 @@
                             </select>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <div class="form-group">
                             <label class="control-label">기자 사진 업로드</label>
                             <!-- 파일 업로드 필드 -->
@@ -86,7 +97,7 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-6 text-left">
+                    <div class="col-sm-4 text-left">
                         <div class="form-group">
                             <p>미리보기:</p>
                             <img id="photoPreview" src="#" alt="기자 사진 미리보기" style="max-width: 200px; display: none;">

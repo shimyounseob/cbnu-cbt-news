@@ -65,7 +65,7 @@ function MostreadArticle({ article }) {
               <div className="text-sm">
                 <span className="text-gray-500">By </span>
                 <Link
-                  href={`/writers/${article.writer[0].writer_id}`}
+                  href={`/writers/${article.writer[0]?.id}`}
                   className="font-medium text-gray-700 hover:underline"
                 >
                   {article.writer[0].english_name}

@@ -1,19 +1,11 @@
 const socials = [
   {
-    name: 'facebook',
-    href: '#',
-  },
-  {
     name: 'instagram',
-    href: '#',
+    href: 'https://www.instagram.com/cbnu_cbt/',
   },
   {
-    name: 'twitter',
-    href: '#',
-  },
-  {
-    name: 'linkedin',
-    href: '#',
+    name: 'kakaotalk',
+    href: 'https://pf.kakao.com/_xoxjxcyxj',
   },
 ]
 

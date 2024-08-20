@@ -39,6 +39,11 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: true,
                 comment: "학번",
             },
+            position: {
+                type: DataTypes.STRING(100),
+                allowNull: true,
+                comment: "기자 직책",  // 새로운 직책 컬럼 추가
+            },
             created_at: {
                 type: DataTypes.DATE,
                 allowNull: false,
