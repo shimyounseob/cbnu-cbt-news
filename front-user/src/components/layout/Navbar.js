@@ -1,18 +1,20 @@
 'use client'
 
-import Link from 'next/link' // Next.js의 Link 컴포넌트를 사용하여 페이지 간 링크를 관리합니다.
-import Image from 'next/image' // 최적화된 이미지 로딩을 위해 Next.js의 Image 컴포넌트를 사용합니다.
-import { usePathname } from 'next/navigation' // 현재 경로를 가져오기 위해 usePathname 훅을 사용합니다.
-import { Fragment, forwardRef } from 'react' // React의 Fragment와 forwardRef를 사용합니다.
-import { Disclosure, Menu, Transition } from '@headlessui/react' // Headless UI의 Disclosure, Menu, Transition을 사용하여 네비게이션 메뉴를 구현합니다.
-import clsx from 'clsx' // 여러 클래스를 조건부로 결합하기 위해 clsx를 사용합니다.
-import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid' // 아이콘을 사용하기 위해 heroicons 라이브러리를 사용합니다.
+import Link from 'next/link' 
+import Image from 'next/image'
+import { usePathname } from 'next/navigation' 
+import { Fragment, forwardRef } from 'react'
+import { Disclosure, Menu, Transition } from '@headlessui/react' 
+import clsx from 'clsx' // 여러 클래스를 조건부로 결합다.
+import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid' // 아이콘
+import { useState, useEffect } from 'react'; 
+import { useRouter } from 'next/navigation'; 
 
-// 로고 이미지를 가져오기 위한 경로입니다.
+// 로고 이미지를 가져오기
 import logo from '/public/images/the_chungbuk_times.png'
 import logoIcon from '/public/images/cbnu_logo_edit.png'
 
-// 네비게이션 메뉴 항목을 정의합니다.
+// 네비게이션 메뉴 
 const menu = [
   {
     name: 'Campus', // 단독 메뉴 항목
@@ -48,7 +50,7 @@ const menu = [
   },
 ]
 
-// 로고를 렌더링하는 컴포넌트입니다.
+// 로고 렌더링
 function Logo() {
   return (
     <div className="flex shrink-0 items-center">
@@ -74,7 +76,7 @@ function Logo() {
   )
 }
 
-// 드롭다운 메뉴를 렌더링하는 컴포넌트입니다.
+// 드롭다운 메뉴
 function Dropdown({ name, subMenu }) {
   return (
     <Menu as="div" className="relative">
@@ -131,7 +133,7 @@ function Dropdown({ name, subMenu }) {
   )
 }
 
-// 데스크탑 네비게이션을 렌더링하는 컴포넌트입니다.
+// 데스크탑 네비게이션
 function DesktopNavigation() {
   return (
     <div className="ml-6 hidden items-center justify-between text-xl md:flex md:space-x-0.5 md:text-base lg:space-x-2">
@@ -146,7 +148,7 @@ function DesktopNavigation() {
   )
 }
 
-// 햄버거 메뉴 버튼을 렌더링하는 컴포넌트입니다. (모바일에서 사용)
+// 햄버거 메뉴 버튼 (모바일에서 사용)
 function HamburgerButton({ open }) {
   return (
     <Disclosure.Button className="group relative z-50 ml-6 flex cursor-pointer items-center justify-center rounded-full bg-gray-50 p-3 shadow-sm ring-1 ring-gray-900/5 transition duration-300 ease-in-out hover:bg-gray-100 focus:outline-none md:hidden">
@@ -180,7 +182,7 @@ function HamburgerButton({ open }) {
   )
 }
 
-// 모바일 메뉴를 렌더링하는 컴포넌트입니다.
+// 모바일 메뉴
 function MobileMenu() {
   console.log("MobileMenu component rendered");
 
@@ -235,11 +237,24 @@ function MobileMenu() {
   );
 }
 
-// 검색창을 렌더링하는 컴포넌트입니다.
+// 검색창을 렌더링
 function Search() {
+  const [query, setQuery] = useState(''); // 검색어를 상태로 관리
+  const router = useRouter(); // Next.js의 useRouter 훅 사용
+
+  const handleSearch = (e) => {
+    e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+    if (query.trim()) { // 검색어가 공백이 아닌 경우
+      router.push(`/search/${encodeURIComponent(query)}`); // 검색어를 URL로 인코딩하여 이동
+    }
+  };
+
   return (
     <div className="relative ml-6 h-10 w-full max-w-xxs rounded-3xl">
-      <form className="group rounded-3xl transition duration-300 ease-in-out">
+      <form 
+        className="group rounded-3xl transition duration-300 ease-in-out" 
+        onSubmit={handleSearch} // 폼 제출 이벤트 핸들러 추가
+      >
         <div className="absolute inset-y-0 left-3 flex items-center">
           <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
         </div>
@@ -247,13 +262,15 @@ function Search() {
           type="search"
           className="h-10 w-full rounded-3xl border border-gray-200 bg-white px-10 py-3 text-sm leading-5 text-gray-800 transition duration-300 ease-in-out hover:bg-gray-50 focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-100"
           placeholder="Search..."
+          value={query} // 입력값을 상태로 연결
+          onChange={(e) => setQuery(e.target.value)} // 입력값이 변경될 때 상태 업데이트
         />
       </form>
     </div>
-  )
+  );
 }
 
-// 메뉴 아이템을 렌더링하는 컴포넌트입니다.
+// 메뉴 아이템
 const MenuNavItem = forwardRef(
   (
     {
@@ -287,7 +304,7 @@ const MenuNavItem = forwardRef(
 
 MenuNavItem.displayName = 'MenuNavItem' // forwardRef 컴포넌트의 이름 설정
 
-// 데스크탑에서 네비게이션 항목을 렌더링하는 컴포넌트입니다.
+// 데스크탑에서 네비게이션 항목
 function DesktopNavItem({ link }) {
   let isActive = usePathname() === link.href // 현재 경로와 링크의 경로를 비교하여 활성 상태를 확인합니다.
 
@@ -306,7 +323,7 @@ function DesktopNavItem({ link }) {
   )
 }
 
-// 최종적으로 네비게이션 바를 렌더링하는 Navbar 컴포넌트입니다.
+// 최종적으로 네비게이션 바를 렌더링
 export default function Navbar() {
   return (
     <Disclosure as="header" className="relative">
@@ -314,21 +331,17 @@ export default function Navbar() {
         <>
           <div className="relative z-10 border-b border-gray-300/60">
             <nav className="mx-auto flex h-20 max-w-7xl items-center bg-white px-4 sm:px-6 lg:border-0 lg:px-8">
-              {/* Main navbar for large screens */}
               <div className="flex w-full items-center justify-between">
                 <Logo />
-
-                <DesktopNavigation /> {/* 데스크탑 네비게이션 */}
-                <Search /> {/* 검색창 */}
-
-                <HamburgerButton open={open} /> {/* 모바일용 햄버거 버튼 */}
+                <DesktopNavigation />
+                <Search /> {/* Search 컴포넌트를 사용 */}
+                <HamburgerButton open={open} />
               </div>
             </nav>
           </div>
-
-          <MobileMenu /> {/* 모바일 메뉴 */}
+          <MobileMenu />
         </>
       )}
     </Disclosure>
-  )
+  );
 }

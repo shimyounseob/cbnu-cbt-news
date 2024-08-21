@@ -19,8 +19,6 @@ export function Twitter(props) {
 
 export function Instagram(props) {
 
-  console.log('Rendering Instagram icon with props:', props);
-  
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +81,6 @@ export function GitHub(props) {
 }
 
 export function Kakaotalk(props) {
-  console.log('Rendering Kakaotalk icon with props:', props);
 
   return (
     <div

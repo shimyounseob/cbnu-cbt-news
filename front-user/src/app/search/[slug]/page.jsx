@@ -1,15 +1,7 @@
-import { allArticles } from 'contentlayer/generated'
-import { compareDesc } from 'date-fns'
-import clsx from 'clsx'
-
-import TopicHeader from '@/components/headers/TopicHeader'
-import SingleColFeed from '@/components/shared/SingleColFeed'
-import CategorySingleFeed from '@/components/shared/CategorySingleFeed'
-import SidebarArticles from '@/components/sidebar/SidebarArticles'
+import SearchHeader from '@/components/headers/SearchHeader'
+import SearchSingleFeed from '@/components/shared/SearchSingleFeed'
 import SidebarMostread from '@/components/sidebar/SidebarMostread'
 import SidebarSocialLinks from '@/components/sidebar/SidebarSocialLinks'
-import SidebarAd from '@/components/sidebar/SidebarAd'
-import Pagination from '@/components/shared/Pagination'
 import Newsletter from '@/components/shared/Newsletter'
 import { getTags } from '@/libs/getTags'
 
@@ -23,18 +15,18 @@ export const generateStaticParams = async () =>
 //     .replace(/-/g, ' ')
 //     .replace(/\b\w/g, (l) => l.toUpperCase())
 //   return {
-//     title: `The Chungbuk Times`,
+//     title: `The Chungbuk Times}`,
 //   }
 // }
 
 // TagPage 컴포넌트
-export default function TagPage({ params }) {
-  const categoryOrSubcategory = params.slug.charAt(0).toUpperCase() + params.slug.slice(1); // 슬러그를 categoryOrSubcategory로 설정
-  console.log("categoryOrSubcategory: ", categoryOrSubcategory);
+export default function SearchPage({ params }) {
+  const searchWord = params.slug
+  console.log("searchWord: ", searchWord);
 
   return (
     <>
-      <TopicHeader item={categoryOrSubcategory} type="tag" />
+      <SearchHeader item={searchWord} type="tag" />
 
       {/* Feed with Sidebar */}
       <section className="relative mx-auto max-w-xl px-4 py-12 sm:px-12 sm:py-16 md:max-w-3xl lg:max-w-screen-xl lg:px-8 lg:py-24"style={{ padding: "0px" }}>
@@ -42,7 +34,7 @@ export default function TagPage({ params }) {
           <div className="col-span-2">
             {/* 슬러그를 categoryOrSubcategory로 전달 */}
             <div>
-              <CategorySingleFeed categoryOrSubcategory={categoryOrSubcategory} />
+              <SearchSingleFeed searchWord={searchWord} />
             </div>
           </div>
 

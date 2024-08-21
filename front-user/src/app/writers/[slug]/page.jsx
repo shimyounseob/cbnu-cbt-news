@@ -18,7 +18,7 @@ import SidebarMostread from '@/components/sidebar/SidebarMostread'
 // export async function generateMetadata({ params }) {
 //   const author = allAuthors.find((author) => author.slug === params.slug)
 //   return {
-//     title: `Showing articles by ${author.name}`,
+//     title: `The Chungbuk Times`,
 //   }
 // }
 
