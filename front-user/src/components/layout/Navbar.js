@@ -1,20 +1,20 @@
 'use client'
 
-import Link from 'next/link' 
+import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation' 
+import { usePathname } from 'next/navigation'
 import { Fragment, forwardRef } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react' 
+import { Disclosure, Menu, Transition } from '@headlessui/react'
 import clsx from 'clsx' // 여러 클래스를 조건부로 결합다.
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid' // 아이콘
-import { useState, useEffect } from 'react'; 
-import { useRouter } from 'next/navigation'; 
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 // 로고 이미지를 가져오기
 import logo from '/public/images/the_chungbuk_times.png'
 import logoIcon from '/public/images/cbnu_logo_edit.png'
 
-// 네비게이션 메뉴 
+// 네비게이션 메뉴
 const menu = [
   {
     name: 'Campus', // 단독 메뉴 항목
@@ -22,7 +22,8 @@ const menu = [
   },
   {
     name: 'News', // 메뉴 항목 이름
-    subMenu: [ // 드롭다운 메뉴 항목
+    subMenu: [
+      // 드롭다운 메뉴 항목
       { name: 'Society', href: '/tags/society' },
       { name: 'Global', href: '/tags/global' },
       { name: 'Feature', href: '/tags/feature' },
@@ -30,7 +31,8 @@ const menu = [
   },
   {
     name: 'Culture', // 메뉴 항목 이름
-    subMenu: [ // 드롭다운 메뉴 항목
+    subMenu: [
+      // 드롭다운 메뉴 항목
       { name: 'Culture', href: '/tags/culture' },
       { name: 'Experience', href: '/tags/experience' },
       { name: 'People', href: '/tags/people' },
@@ -56,20 +58,20 @@ function Logo() {
     <div className="flex shrink-0 items-center">
       {/* 모바일 화면에서는 작은 로고 아이콘을 보여줍니다. */}
       <Link href="/" className="h-9 lg:hidden">
-        <Image 
-          src={logoIcon} 
-          alt="CBNU Icon" 
-          style={{ height: '40px', width: 'auto' }} // 인라인 스타일로 높이와 너비를 설정합니다.
+        <Image
+          src={logoIcon}
+          alt="CBNU Icon"
+          style={{ height: '40px', width: 'auto' }}
         />
       </Link>
       {/* 데스크탑 화면에서는 큰 로고를 보여줍니다. */}
       <Link href="/" className="hidden h-9 lg:block">
-        <Image 
-          src={logo} 
-          alt="the chungbuk times logo" 
-          width={500} // 로고의 너비를 설정합니다.
-          height={50} // 로고의 높이를 설정합니다.
-          style={{ height: '40px', width: 'auto' }} // 인라인 스타일로 높이와 너비를 설정합니다.
+        <Image
+          src={logo}
+          alt="the chungbuk times logo"
+          width={500}
+          height={50}
+          style={{ height: '40px', width: 'auto' }}
         />
       </Link>
     </div>
@@ -82,7 +84,6 @@ function Dropdown({ name, subMenu }) {
     <Menu as="div" className="relative">
       {({ open }) => (
         <>
-          {/* 드롭다운 버튼 */}
           <Menu.Button
             className={clsx(
               'group flex items-center px-3 py-1 text-md font-medium outline-none focus:outline-none',
@@ -91,19 +92,17 @@ function Dropdown({ name, subMenu }) {
                 : 'text-gray-800 transition duration-300 ease-in-out hover:text-red-700',
             )}
           >
-            <span>{name}</span> {/* 드롭다운 메뉴 이름 */}
+            <span>{name}</span>
             <ChevronDownIcon
               className={clsx(
                 'ml-2 h-5 w-5 transform duration-300',
                 open
-                  ? 'rotate-180 text-red-700' // 메뉴가 열렸을 때 아이콘을 회전시킵니다.
+                  ? 'rotate-180 text-red-700'
                   : 'text-gray-600 group-hover:text-red-700',
               )}
               aria-hidden="true"
             />
           </Menu.Button>
-
-          {/* 드롭다운 메뉴 아이템들 */}
           <Transition
             as={Fragment}
             enter="transition ease-out duration-100"
@@ -137,13 +136,17 @@ function Dropdown({ name, subMenu }) {
 function DesktopNavigation() {
   return (
     <div className="ml-6 hidden items-center justify-between text-xl md:flex md:space-x-0.5 md:text-base lg:space-x-2">
-      {menu.map((link, index) => (
-        link.subMenu ? ( // 드롭다운 메뉴가 있는 경우
-          <Dropdown key={`desktop-link-${index}`} name={link.name} subMenu={link.subMenu} />
+      {menu.map((link, index) =>
+        link.subMenu ? (
+          <Dropdown
+            key={`desktop-link-${index}`}
+            name={link.name}
+            subMenu={link.subMenu}
+          />
         ) : (
           <DesktopNavItem key={`desktop-link-${index}`} link={link} />
-        )
-      ))}
+        ),
+      )}
     </div>
   )
 }
@@ -183,9 +186,7 @@ function HamburgerButton({ open }) {
 }
 
 // 모바일 메뉴
-function MobileMenu() {
-  console.log("MobileMenu component rendered");
-
+function MobileMenu({ isLoggedIn, onLoginStatusChange }) {
   return (
     <Transition
       enter="transition duration-300 ease-out"
@@ -196,64 +197,63 @@ function MobileMenu() {
       leaveTo="transform scale-95 -translate-y-full opacity-0"
     >
       <Disclosure.Panel>
-        {({ close }) => {
-          console.log("Disclosure.Panel rendered");
+        {({ close }) => (
+          <nav
+            className="border-b border-gray-300/60 bg-white md:hidden"
+            aria-label="Global"
+            id="mobile-menu"
+          >
+            {/* 로그인 버튼을 메뉴 맨 위에 추가 */}
+            <LoginButton
+              isMobile
+              isLoggedIn={isLoggedIn}
+              onLoginStatusChange={onLoginStatusChange}
+            />
 
-          return (
-            <nav
-              className="border-b border-gray-300/60 bg-white md:hidden"
-              aria-label="Global"
-              id="mobile-menu"
-            >
-              <div className="space-y-1 px-2 pb-3 pt-2">
-                {menu.map((link, index) => {
-                  if (link.subMenu) {
-                    // subMenu가 있는 항목을 그대로 표시
-                    return link.subMenu.map((subLink, subIndex) => (
-                      <MenuNavItem
-                        link={subLink}
-                        key={`mobile-submenu-link-${subIndex}`}
-                        close={close}
-                      />
-                    ));
-                  } else {
-                    // subMenu가 없는 단일 항목에 대한 처리
-                    console.log(`Rendering menu item: ${link.name}, href: ${link.href}, index: ${index}`);
-                    return (
-                      <MenuNavItem
-                        link={link}
-                        key={`mobile-menu-link-${index}`}
-                        close={close}
-                      />
-                    );
-                  }
-                })}
-              </div>
-            </nav>
-          );
-        }}
+            <div className="space-y-1 px-2 pb-3 pt-2">
+              {menu.map((link, index) => {
+                if (link.subMenu) {
+                  return link.subMenu.map((subLink, subIndex) => (
+                    <MenuNavItem
+                      link={subLink}
+                      key={`mobile-submenu-link-${subIndex}`}
+                      close={close}
+                    />
+                  ))
+                } else {
+                  return (
+                    <MenuNavItem
+                      link={link}
+                      key={`mobile-menu-link-${index}`}
+                      close={close}
+                    />
+                  )
+                }
+              })}
+            </div>
+          </nav>
+        )}
       </Disclosure.Panel>
     </Transition>
-  );
+  )
 }
-
 // 검색창을 렌더링
 function Search() {
-  const [query, setQuery] = useState(''); // 검색어를 상태로 관리
-  const router = useRouter(); // Next.js의 useRouter 훅 사용
+  const [query, setQuery] = useState('')
+  const router = useRouter()
 
   const handleSearch = (e) => {
-    e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
-    if (query.trim()) { // 검색어가 공백이 아닌 경우
-      router.push(`/search/${encodeURIComponent(query)}`); // 검색어를 URL로 인코딩하여 이동
+    e.preventDefault()
+    if (query.trim()) {
+      router.push(`/search/${encodeURIComponent(query)}`)
     }
-  };
+  }
 
   return (
     <div className="relative ml-6 h-10 w-full max-w-xxs rounded-3xl">
-      <form 
-        className="group rounded-3xl transition duration-300 ease-in-out" 
-        onSubmit={handleSearch} // 폼 제출 이벤트 핸들러 추가
+      <form
+        className="group rounded-3xl transition duration-300 ease-in-out"
+        onSubmit={handleSearch}
       >
         <div className="absolute inset-y-0 left-3 flex items-center">
           <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
@@ -262,26 +262,70 @@ function Search() {
           type="search"
           className="h-10 w-full rounded-3xl border border-gray-200 bg-white px-10 py-3 text-sm leading-5 text-gray-800 transition duration-300 ease-in-out hover:bg-gray-50 focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-100"
           placeholder="Search..."
-          value={query} // 입력값을 상태로 연결
-          onChange={(e) => setQuery(e.target.value)} // 입력값이 변경될 때 상태 업데이트
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
         />
       </form>
     </div>
-  );
+  )
+}
+
+// 로그인 버튼
+function LoginButton({ isMobile = false, isLoggedIn, onLoginStatusChange }) {
+  const handleLoginClick = () => {
+    window.location.href = 'http://localhost:5001/auth/google'
+  }
+
+  const handleLogoutClick = async () => {
+    try {
+      await fetch('http://localhost:5001/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      })
+      onLoginStatusChange(false) // 로그아웃 상태로 변경
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
+  }
+
+  return (
+    <div
+      className={isMobile ? 'mt-4 pl-4' : ''}
+      style={isMobile ? { paddingLeft: '20px' } : {}}
+    >
+      {isLoggedIn ? (
+        <button
+          onClick={handleLogoutClick}
+          className="flex items-center justify-center rounded-full bg-[#b92555] px-4 py-1 text-white transition hover:bg-[#9b2049]"
+          style={isMobile ? { fontSize: '0.875rem' } : { fontSize: '0.75rem' }}
+        >
+          Logout
+        </button>
+      ) : (
+        <button
+          onClick={handleLoginClick}
+          className="flex items-center justify-center rounded-full bg-[#b92555] px-4 py-1 text-white transition hover:bg-[#9b2049]"
+          style={isMobile ? { fontSize: '0.875rem' } : { fontSize: '0.75rem' }}
+        >
+          Login
+        </button>
+      )}
+    </div>
+  )
 }
 
 // 메뉴 아이템
 const MenuNavItem = forwardRef(
   (
     {
-      link, // 링크 정보
-      className = 'px-4 py-3', // 기본 클래스
-      activeTextColorClassName = 'text-gray-800', // 활성화된 링크의 텍스트 색상
-      close, // 모바일 메뉴에서 링크 클릭 시 메뉴를 닫기 위한 함수
+      link,
+      className = 'px-4 py-3',
+      activeTextColorClassName = 'text-gray-800',
+      close,
     },
     ref,
   ) => {
-    let isActive = usePathname() === link.href // 현재 경로와 링크의 경로를 비교하여 활성 상태를 확인합니다.
+    let isActive = usePathname() === link.href
 
     return (
       <Link
@@ -291,10 +335,10 @@ const MenuNavItem = forwardRef(
           'block rounded-lg font-medium',
           className,
           isActive
-            ? 'bg-gray-50 text-red-700' // 활성화된 링크 스타일
+            ? 'bg-gray-50 text-red-700'
             : `${activeTextColorClassName} transition duration-300 ease-in-out hover:bg-gray-50 hover:text-red-700`,
         )}
-        onClick={close} // 모바일 메뉴에서 링크를 클릭하면 메뉴를 닫습니다.
+        onClick={close}
       >
         {link.name}
       </Link>
@@ -302,11 +346,11 @@ const MenuNavItem = forwardRef(
   },
 )
 
-MenuNavItem.displayName = 'MenuNavItem' // forwardRef 컴포넌트의 이름 설정
+MenuNavItem.displayName = 'MenuNavItem'
 
 // 데스크탑에서 네비게이션 항목
 function DesktopNavItem({ link }) {
-  let isActive = usePathname() === link.href // 현재 경로와 링크의 경로를 비교하여 활성 상태를 확인합니다.
+  let isActive = usePathname() === link.href
 
   return (
     <Link
@@ -314,7 +358,7 @@ function DesktopNavItem({ link }) {
       className={clsx(
         'px-3 py-1 text-md font-medium',
         isActive
-          ? 'text-red-700' // 활성화된 링크 스타일
+          ? 'text-red-700'
           : 'text-gray-800 transition duration-300 ease-in-out hover:text-red-700',
       )}
     >
@@ -325,6 +369,27 @@ function DesktopNavItem({ link }) {
 
 // 최종적으로 네비게이션 바를 렌더링
 export default function Navbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  const checkAuthStatus = async () => {
+    try {
+      console.log('Checking auth status...')
+      const response = await fetch('http://localhost:5001/auth/status', {
+        credentials: 'include',
+      })
+      const data = await response.json()
+      console.log('Auth status:', data) // 콘솔에 로그인 상태를 출력
+      setIsLoggedIn(data.loggedIn || false) // 수정된 부분: loggedIn 필드를 사용
+    } catch (error) {
+      console.error('Failed to check authentication status:', error)
+      setIsLoggedIn(false)
+    }
+  }
+
+  useEffect(() => {
+    checkAuthStatus() // 페이지 로드 시 로그인 상태 확인
+  }, [])
+
   return (
     <Disclosure as="header" className="relative">
       {({ open }) => (
@@ -334,14 +399,23 @@ export default function Navbar() {
               <div className="flex w-full items-center justify-between">
                 <Logo />
                 <DesktopNavigation />
-                <Search /> {/* Search 컴포넌트를 사용 */}
+                <Search />
+                <div className="hidden md:flex">
+                  <LoginButton
+                    isLoggedIn={isLoggedIn}
+                    onLoginStatusChange={setIsLoggedIn}
+                  />
+                </div>
                 <HamburgerButton open={open} />
               </div>
             </nav>
           </div>
-          <MobileMenu />
+          <MobileMenu
+            isLoggedIn={isLoggedIn}
+            onLoginStatusChange={setIsLoggedIn}
+          />
         </>
       )}
     </Disclosure>
-  );
+  )
 }

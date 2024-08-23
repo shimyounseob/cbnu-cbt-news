@@ -32,7 +32,7 @@ export default function SearchPage({ params }) {
       <section className="relative mx-auto max-w-xl px-4 py-12 sm:px-12 sm:py-16 md:max-w-3xl lg:max-w-screen-xl lg:px-8 lg:py-24"style={{ padding: "0px" }}>
         <div className="w-full lg:grid lg:grid-cols-3 lg:gap-8 xl:gap-12">
           <div className="col-span-2">
-            {/* 슬러그를 categoryOrSubcategory로 전달 */}
+            {/* 슬러그를 searchWord로 전달 */}
             <div>
               <SearchSingleFeed searchWord={searchWord} />
             </div>

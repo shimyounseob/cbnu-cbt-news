@@ -1,14 +1,15 @@
+//환경설정파일 구성하기
+require("dotenv").config();
+
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const passport = require('./config/passport');  // Passport 설정 파일 불러오기
 
 // cors 패키지 불러오기
 const cors = require('cors');  
-
-//환경설정파일 구성하기
-require("dotenv").config();
 
 //서버 세션 객체 관리 패키지 참조하기
 var session = require("express-session");
@@ -34,6 +35,9 @@ var writerRouter = require("./routes/writer");
 
 const apiarticleRouter = require('./api/article');
 const apiwriterRouter = require('./api/writer');
+
+// OAuth 전용 라우터 설정
+var authRouter = require("./routes/auth");
 
 var app = express();
 
@@ -83,6 +87,10 @@ app.use('/uploads/writer', express.static(path.join(__dirname, 'public/uploads/w
 // '/uploads/article' 경로를 정적 디렉토리로 설정
 app.use('/uploads/article', express.static(path.join(__dirname, 'public/uploads/article')));
 
+// Passport 초기화 및 세션 연결
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 
 // view engine setup
@@ -110,6 +118,9 @@ app.use("/admin", adminRouter);
 app.use("/article", articleRouter);
 
 app.use("/writer", writerRouter);
+
+// 관리자와 OAuth 라우트를 분리하여 관리
+app.use("/auth", authRouter); // OAuth 관련 라우터
 
 // app.use('/message', messageRouter);
 

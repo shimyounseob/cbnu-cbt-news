@@ -120,7 +120,7 @@ router.get("/create", isLoggined, async (req, res, next) => {
 // 신규 게시글 입력정보 등록처리 요청과 응답처리 라우팅메소드
 // 호출주소: http://localhost:3000/article/create
 router.post("/create", isLoggined, async (req, res) => {
-  console.log("Received req.body:", req.body);
+  // console.log("Received req.body:", req.body);
 
   // Step1: 신규 게시글 등록폼에서 사용자가 입력/선택한 값을 추출
   const title = req.body.title;

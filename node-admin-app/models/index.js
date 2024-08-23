@@ -14,6 +14,9 @@ const db= {};
 //DB연결정보로 시퀄라이즈 ORM 객체 생성
 const sequelize = new Sequelize(config.database,config.username,config.password,config);
 
+// 로그 비활성화
+sequelize.options.logging = false;
+
 //DB 처리 객체에 시퀄라이즈 정보 맵핑처리
 //이후 DB객체를 통해 데이터 관리가능해짐
 db.sequelize = sequelize; //DB연결정보를 포함한 DB제어 객체속성(CRUD)

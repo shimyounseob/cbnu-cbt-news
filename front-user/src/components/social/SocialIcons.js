@@ -1,22 +1,5 @@
 import Image from 'next/image';
 
-export function Twitter(props) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      {...props}
-    >
-      <g>
-        <path d="M24,4.6c-0.9,0.4-1.8,0.7-2.8,0.8c1-0.6,1.8-1.6,2.2-2.7c-1,0.6-2,1-3.1,1.2c-0.9-1-2.2-1.6-3.6-1.6 c-2.7,0-4.9,2.2-4.9,4.9c0,0.4,0,0.8,0.1,1.1C7.7,8.1,4.1,6.1,1.7,3.1C1.2,3.9,1,4.7,1,5.6c0,1.7,0.9,3.2,2.2,4.1 C2.4,9.7,1.6,9.5,1,9.1c0,0,0,0,0,0.1c0,2.4,1.7,4.4,3.9,4.8c-0.4,0.1-0.8,0.2-1.3,0.2c-0.3,0-0.6,0-0.9-0.1c0.6,2,2.4,3.4,4.6,3.4 c-1.7,1.3-3.8,2.1-6.1,2.1c-0.4,0-0.8,0-1.2-0.1c2.2,1.4,4.8,2.2,7.5,2.2c9.1,0,14-7.5,14-14c0-0.2,0-0.4,0-0.6 C22.5,6.4,23.3,5.5,24,4.6z"></path>
-      </g>
-    </svg>
-  )
-}
-
 export function Instagram(props) {
 
   return (
@@ -35,6 +18,48 @@ export function Instagram(props) {
       </g>
     </svg>
   )
+}
+
+export function Kakaotalk(props) {
+
+  return (
+    <div
+      style={{
+        width: '24px',
+        height: '24px',
+        borderRadius: '50%',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#FFFFFF' 
+      }}
+      {...props}
+    >
+      <Image
+        src="/images/icons/kakaotalk.png"
+        alt="Kakaotalk"
+        width={24}
+        height={24}
+        style={{ objectFit: 'cover' }}
+      />
+    </div>
+  );
+}
+
+export function GoogleLogo(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 48 48"
+      width="24px"
+      height="24px"
+      fill="currentColor"
+      {...props}
+    >
+      <path d="M44.5,20H24v8.5h11.9C34.6,33.7,30.9,36,26.5,36c-5.2,0-9.5-4.3-9.5-9.5s4.3-9.5,9.5-9.5c2.4,0,4.6,0.9,6.2,2.4l6.2-6.2C34.5,9.4,30.7,8,26.5,8C16.7,8,9,15.7,9,25.5S16.7,43,26.5,43c9.2,0,15.5-6.5,15.5-15.5c0-1-0.1-2-0.2-3H44.5z"/>
+    </svg>
+  );
 }
 
 export function Facebook(props) {
@@ -78,33 +103,6 @@ export function GitHub(props) {
       </defs>
     </svg>
   )
-}
-
-export function Kakaotalk(props) {
-
-  return (
-    <div
-      style={{
-        width: '24px',
-        height: '24px',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#FFFFFF' 
-      }}
-      {...props}
-    >
-      <Image
-        src="/images/icons/kakaotalk.png"
-        alt="Kakaotalk"
-        width={24}
-        height={24}
-        style={{ objectFit: 'cover' }}
-      />
-    </div>
-  );
 }
 
 export function Linkedin(props) {
@@ -158,6 +156,23 @@ export function Email(props) {
         strokeLinejoin="round"
         d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
       />
+    </svg>
+  )
+}
+
+export function Twitter(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      {...props}
+    >
+      <g>
+        <path d="M24,4.6c-0.9,0.4-1.8,0.7-2.8,0.8c1-0.6,1.8-1.6,2.2-2.7c-1,0.6-2,1-3.1,1.2c-0.9-1-2.2-1.6-3.6-1.6 c-2.7,0-4.9,2.2-4.9,4.9c0,0.4,0,0.8,0.1,1.1C7.7,8.1,4.1,6.1,1.7,3.1C1.2,3.9,1,4.7,1,5.6c0,1.7,0.9,3.2,2.2,4.1 C2.4,9.7,1.6,9.5,1,9.1c0,0,0,0,0,0.1c0,2.4,1.7,4.4,3.9,4.8c-0.4,0.1-0.8,0.2-1.3,0.2c-0.3,0-0.6,0-0.9-0.1c0.6,2,2.4,3.4,4.6,3.4 c-1.7,1.3-3.8,2.1-6.1,2.1c-0.4,0-0.8,0-1.2-0.1c2.2,1.4,4.8,2.2,7.5,2.2c9.1,0,14-7.5,14-14c0-0.2,0-0.4,0-0.6 C22.5,6.4,23.3,5.5,24,4.6z"></path>
+      </g>
     </svg>
   )
 }
