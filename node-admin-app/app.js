@@ -7,6 +7,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const passport = require('./config/passport');  // Passport 설정 파일 불러오기
+const connectDB = require('./config/db'); // 몽고 db 설정파일 불러오기
 
 // cors 패키지 불러오기
 const cors = require('cors');  
@@ -50,6 +51,7 @@ app.use(cors({
   credentials: true,  // 쿠키 및 인증 헤더를 포함할지 여부
 }));
 
+
 //백엔드 앱에서 세션을 사용할수 있게 설정하기
 app.use(
   session({
@@ -63,6 +65,10 @@ app.use(
     },
   })
 );
+
+
+// MongoDB 연결
+connectDB();
 
 app.use((req, res, next) => {
   console.log(`Received request: ${req.method} ${req.url}`);

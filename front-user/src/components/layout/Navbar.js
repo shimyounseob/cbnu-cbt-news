@@ -3,60 +3,57 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Fragment, forwardRef } from 'react'
+import { Fragment, forwardRef, useState, useEffect } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import clsx from 'clsx' // 여러 클래스를 조건부로 결합다.
-import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid' // 아이콘
-import { useState, useEffect } from 'react'
+import clsx from 'clsx'
+import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { useRouter } from 'next/navigation'
+import axios from '../../libs/axios'; // 수정된 Axios 경로
 
 // 로고 이미지를 가져오기
 import logo from '/public/images/the_chungbuk_times.png'
 import logoIcon from '/public/images/cbnu_logo_edit.png'
 
-// 네비게이션 메뉴
+// 네비게이션 메뉴 항목 정의
 const menu = [
   {
-    name: 'Campus', // 단독 메뉴 항목
-    href: '/tags/campus', // 해당 항목에 대한 링크
+    name: 'Campus',
+    href: '/tags/campus',
   },
   {
-    name: 'News', // 메뉴 항목 이름
+    name: 'News',
     subMenu: [
-      // 드롭다운 메뉴 항목
       { name: 'Society', href: '/tags/society' },
       { name: 'Global', href: '/tags/global' },
       { name: 'Feature', href: '/tags/feature' },
     ],
   },
   {
-    name: 'Culture', // 메뉴 항목 이름
+    name: 'Culture',
     subMenu: [
-      // 드롭다운 메뉴 항목
       { name: 'Culture', href: '/tags/culture' },
       { name: 'Experience', href: '/tags/experience' },
       { name: 'People', href: '/tags/people' },
     ],
   },
   {
-    name: 'Column', // 메뉴 항목 이름
-    href: '/tags/column', // 해당 항목에 대한 링크
+    name: 'Column',
+    href: '/tags/column',
   },
   {
-    name: 'Photo', // 메뉴 항목 이름
-    href: '/tags/photo', // 해당 항목에 대한 링크
+    name: 'Photo',
+    href: '/tags/photo',
   },
   {
-    name: 'Chatbot', // 메뉴 항목 이름
-    href: '/chatbot', // 해당 항목에 대한 링크
+    name: 'Chatbot',
+    href: '/chatbot',
   },
 ]
 
-// 로고 렌더링
+// 로고 렌더링 컴포넌트
 function Logo() {
   return (
     <div className="flex shrink-0 items-center">
-      {/* 모바일 화면에서는 작은 로고 아이콘을 보여줍니다. */}
       <Link href="/" className="h-9 lg:hidden">
         <Image
           src={logoIcon}
@@ -64,7 +61,6 @@ function Logo() {
           style={{ height: '40px', width: 'auto' }}
         />
       </Link>
-      {/* 데스크탑 화면에서는 큰 로고를 보여줍니다. */}
       <Link href="/" className="hidden h-9 lg:block">
         <Image
           src={logo}
@@ -78,7 +74,7 @@ function Logo() {
   )
 }
 
-// 드롭다운 메뉴
+// 드롭다운 메뉴 컴포넌트
 function Dropdown({ name, subMenu }) {
   return (
     <Menu as="div" className="relative">
@@ -132,7 +128,7 @@ function Dropdown({ name, subMenu }) {
   )
 }
 
-// 데스크탑 네비게이션
+// 데스크탑 네비게이션 컴포넌트
 function DesktopNavigation() {
   return (
     <div className="ml-6 hidden items-center justify-between text-xl md:flex md:space-x-0.5 md:text-base lg:space-x-2">
@@ -185,7 +181,7 @@ function HamburgerButton({ open }) {
   )
 }
 
-// 모바일 메뉴
+// 모바일 메뉴 컴포넌트
 function MobileMenu({ isLoggedIn, onLoginStatusChange }) {
   return (
     <Transition
@@ -237,7 +233,8 @@ function MobileMenu({ isLoggedIn, onLoginStatusChange }) {
     </Transition>
   )
 }
-// 검색창을 렌더링
+
+// 검색창 컴포넌트
 function Search() {
   const [query, setQuery] = useState('')
   const router = useRouter()
@@ -270,19 +267,22 @@ function Search() {
   )
 }
 
-// 로그인 버튼
+// 로그인 버튼 컴포넌트
 function LoginButton({ isMobile = false, isLoggedIn, onLoginStatusChange }) {
   const handleLoginClick = () => {
-    window.location.href = 'http://localhost:5001/auth/google'
+    window.location.href = 'http://localhost:5001/auth/google' // 구글 OAuth 로그인 시작
   }
 
+  // 로그아웃 요청 
   const handleLogoutClick = async () => {
     try {
-      await fetch('http://localhost:5001/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      })
-      onLoginStatusChange(false) // 로그아웃 상태로 변경
+      // 로그아웃 요청을 보내고 상태를 업데이트
+      await axios.post('http://localhost:5001/auth/logout', {}, {
+        withCredentials: true, // 쿠키를 포함한 요청 전송
+      });
+      localStorage.removeItem('accessToken'); // 로그아웃 시 액세스 토큰 삭제
+      localStorage.removeItem('refreshToken'); // 로그아웃 시 리프레시 토큰 삭제
+      onLoginStatusChange(false); // 로그아웃 상태로 변경
     } catch (error) {
       console.error('Logout failed:', error)
     }
@@ -314,7 +314,7 @@ function LoginButton({ isMobile = false, isLoggedIn, onLoginStatusChange }) {
   )
 }
 
-// 메뉴 아이템
+// 메뉴 아이템 컴포넌트
 const MenuNavItem = forwardRef(
   (
     {
@@ -348,7 +348,7 @@ const MenuNavItem = forwardRef(
 
 MenuNavItem.displayName = 'MenuNavItem'
 
-// 데스크탑에서 네비게이션 항목
+// 데스크탑 네비게이션 항목 컴포넌트
 function DesktopNavItem({ link }) {
   let isActive = usePathname() === link.href
 
@@ -371,24 +371,38 @@ function DesktopNavItem({ link }) {
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  const checkAuthStatus = async () => {
-    try {
-      console.log('Checking auth status...')
-      const response = await fetch('http://localhost:5001/auth/status', {
-        credentials: 'include',
-      })
-      const data = await response.json()
-      console.log('Auth status:', data) // 콘솔에 로그인 상태를 출력
-      setIsLoggedIn(data.loggedIn || false) // 수정된 부분: loggedIn 필드를 사용
-    } catch (error) {
-      console.error('Failed to check authentication status:', error)
-      setIsLoggedIn(false)
-    }
-  }
-
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const accessToken = urlParams.get('accessToken')
+    const refreshToken = urlParams.get('refreshToken')
+
+    if (accessToken && refreshToken) {
+      localStorage.setItem('accessToken', accessToken)  // 액세스 토큰 저장
+      localStorage.setItem('refreshToken', refreshToken)  // 리프레시 토큰 저장
+
+      // URL에서 토큰을 제거하여 깨끗한 URL 유지
+      window.history.replaceState({}, document.title, '/')
+    }
+
     checkAuthStatus() // 페이지 로드 시 로그인 상태 확인
   }, [])
+
+  const checkAuthStatus = async () => {
+    const accessToken = localStorage.getItem('accessToken')
+
+    try {
+      const response = await axios.get('http://localhost:5001/auth/status', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`, // 액세스 토큰을 Authorization 헤더에 포함
+        },
+        withCredentials: true, // 쿠키를 포함한 요청 전송
+      })
+      setIsLoggedIn(response.data.loggedIn || false)  // 로그인 상태 업데이트
+    } catch (error) {
+      console.error('Failed to check authentication status:', error)
+      setIsLoggedIn(false)  // 오류 발생 시 로그인 상태를 false로 설정
+    }
+  }
 
   return (
     <Disclosure as="header" className="relative">
