@@ -37,7 +37,7 @@ router.get(
     const refreshToken = generateRefreshToken(req.user);
     
     // 클라이언트로 토큰 전달 (token 변수 오류 수정)
-    res.redirect(`http://localhost:3000?accessToken=${accessToken}&refreshToken=${refreshToken}`);
+    res.redirect(`http://localhost:3000?accessToken=${accessToken}&refreshToken=${refreshToken}&googleId=${req.user.googleId}`);
   }
 );
 

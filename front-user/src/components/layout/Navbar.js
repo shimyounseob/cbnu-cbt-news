@@ -46,7 +46,7 @@ const menu = [
   },
   {
     name: 'Chatbot',
-    href: '/chatbot',
+    href: '/chatbot', // 기본 링크
   },
 ]
 
@@ -130,6 +130,14 @@ function Dropdown({ name, subMenu }) {
 
 // 데스크탑 네비게이션 컴포넌트
 function DesktopNavigation() {
+  const [googleId, setGoogleId] = useState(null);
+
+  useEffect(() => {
+    // 로컬 스토리지에서 googleId 가져오기
+    const storedGoogleId = localStorage.getItem('googleId');
+    setGoogleId(storedGoogleId);
+  }, []);
+
   return (
     <div className="ml-6 hidden items-center justify-between text-xl md:flex md:space-x-0.5 md:text-base lg:space-x-2">
       {menu.map((link, index) =>
@@ -140,7 +148,11 @@ function DesktopNavigation() {
             subMenu={link.subMenu}
           />
         ) : (
-          <DesktopNavItem key={`desktop-link-${index}`} link={link} />
+          <DesktopNavItem
+            key={`desktop-link-${index}`}
+            link={link}
+            googleId={googleId} // googleId를 DesktopNavItem에 전달
+          />
         ),
       )}
     </div>
@@ -280,8 +292,9 @@ function LoginButton({ isMobile = false, isLoggedIn, onLoginStatusChange }) {
       await axios.post('http://localhost:5001/auth/logout', {}, {
         withCredentials: true, // 쿠키를 포함한 요청 전송
       });
-      localStorage.removeItem('accessToken'); // 로그아웃 시 액세스 토큰 삭제
-      localStorage.removeItem('refreshToken'); // 로그아웃 시 리프레시 토큰 삭제
+      localStorage.removeItem('accessToken'); 
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('googleId'); 
       onLoginStatusChange(false); // 로그아웃 상태로 변경
     } catch (error) {
       console.error('Logout failed:', error)
@@ -322,15 +335,20 @@ const MenuNavItem = forwardRef(
       className = 'px-4 py-3',
       activeTextColorClassName = 'text-gray-800',
       close,
+      googleId, // googleId를 MenuNavItem에 전달
     },
     ref,
   ) => {
     let isActive = usePathname() === link.href
+    let href = link.href;
+    if (link.name === 'Chatbot' && googleId) {
+      href = `/chatbot/${googleId}`; // 'Chatbot' 링크에 googleId 추가
+    }
 
     return (
       <Link
         ref={ref}
-        href={link.href}
+        href={href}
         className={clsx(
           'block rounded-lg font-medium',
           className,
@@ -349,12 +367,16 @@ const MenuNavItem = forwardRef(
 MenuNavItem.displayName = 'MenuNavItem'
 
 // 데스크탑 네비게이션 항목 컴포넌트
-function DesktopNavItem({ link }) {
+function DesktopNavItem({ link, googleId }) {
   let isActive = usePathname() === link.href
+  let href = link.href;
+  if (link.name === 'Chatbot' && googleId) {
+    href = `/chatbot/${googleId}`; // 'Chatbot' 링크에 googleId 추가
+  }
 
   return (
     <Link
-      href={link.href}
+      href={href}
       className={clsx(
         'px-3 py-1 text-md font-medium',
         isActive
@@ -375,10 +397,12 @@ export default function Navbar() {
     const urlParams = new URLSearchParams(window.location.search)
     const accessToken = urlParams.get('accessToken')
     const refreshToken = urlParams.get('refreshToken')
+    const googleId = urlParams.get('googleId');
 
-    if (accessToken && refreshToken) {
-      localStorage.setItem('accessToken', accessToken)  // 액세스 토큰 저장
-      localStorage.setItem('refreshToken', refreshToken)  // 리프레시 토큰 저장
+    if (accessToken && refreshToken && googleId) {
+      localStorage.setItem('accessToken', accessToken)  
+      localStorage.setItem('refreshToken', refreshToken)
+      localStorage.setItem('googleId', googleId);  
 
       // URL에서 토큰을 제거하여 깨끗한 URL 유지
       window.history.replaceState({}, document.title, '/')

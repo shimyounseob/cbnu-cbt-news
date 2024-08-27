@@ -2,7 +2,7 @@ import Chatbot from '@/components/chatbot/chatbotpage';
 
 // ChatbotPage 컴포넌트
 export default function ChatbotPage({ params }) {
-  const googleId = params.slug; // URL에서 slug로 전달된 googleId를 가져오기
+  const googleId = params.slug; 
 
   return (
     <section
