@@ -28,10 +28,9 @@ export default function Newsletter() {
             Please submit your application using the form below.
           </p>
 
-          {/* Centered button with a background color */}
           <button
             type="button"
-            className='mt-8 inline-flex h-11 items-center bg-red-600 px-6 py-2 text-tiny uppercase tracking-widest text-white rounded-3xl outline-none transition duration-300 ease-in-out hover:bg-red-700 focus:outline-none sm:font-medium'
+            className='mt-8 inline-flex h-11 items-center bg-[#b42258] px-6 py-2 text-tiny uppercase tracking-widest text-white rounded-3xl outline-none transition duration-300 ease-in-out hover:bg-[#d9296a] focus:outline-none sm:font-medium'
             onClick={() => window.location.href='https://docs.google.com/forms/d/e/1FAIpQLScCzhVHAUkdd4v-5KrDULZTKqPczbADowP7psE3ksqE0uGxLg/viewform'}
           >
             Apply

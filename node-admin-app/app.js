@@ -37,6 +37,9 @@ var writerRouter = require("./routes/writer");
 const apiarticleRouter = require('./api/article');
 const apiwriterRouter = require('./api/writer');
 
+var chatRoomRouter = require('./routes/chatRoom');
+var messageRouter = require('./routes/messages');
+
 // OAuth 전용 라우터 설정
 var authRouter = require("./routes/auth");
 
@@ -135,6 +138,9 @@ app.use("/node_modules", express.static(path.join(__dirname, "node_modules")));
 
 app.use('/api/article', apiarticleRouter);
 app.use('/api/writer', apiwriterRouter);
+
+app.use('/chatRoom', chatRoomRouter);
+app.use('/messages', messageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
