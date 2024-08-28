@@ -4,6 +4,7 @@ import { Roboto_Flex } from 'next/font/google'
 
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import AccordionChild from '@/components/accordion/AccordionChild'
 
 const roboto = Roboto_Flex({
   subsets: ['latin'],
@@ -21,13 +22,16 @@ export const metadata = {
   },
 }
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children, params  }) {
+  const googleId = params?.slug; 
+
   return (
     <html lang="en">
       <body className={clsx('font-sans', roboto.variable)}>
         <Navbar />
         {children}
         <Footer />
+        <AccordionChild googleId={googleId} /> {/* 아코디언 컴포넌트 */}
       </body>
     </html>
   )

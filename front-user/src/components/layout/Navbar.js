@@ -8,7 +8,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import clsx from 'clsx'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { useRouter } from 'next/navigation'
-import axios from '../../libs/axios'; // 수정된 Axios 경로
+import axios from '../../libs/axios' // 수정된 Axios 경로
 
 // 로고 이미지를 가져오기
 import logo from '/public/images/the_chungbuk_times.png'
@@ -130,13 +130,13 @@ function Dropdown({ name, subMenu }) {
 
 // 데스크탑 네비게이션 컴포넌트
 function DesktopNavigation() {
-  const [googleId, setGoogleId] = useState(null);
+  const [googleId, setGoogleId] = useState(null)
 
   useEffect(() => {
     // 로컬 스토리지에서 googleId 가져오기
-    const storedGoogleId = localStorage.getItem('googleId');
-    setGoogleId(storedGoogleId);
-  }, []);
+    const storedGoogleId = localStorage.getItem('googleId')
+    setGoogleId(storedGoogleId)
+  }, [])
 
   return (
     <div className="ml-6 hidden items-center justify-between text-xl md:flex md:space-x-0.5 md:text-base lg:space-x-2">
@@ -285,17 +285,21 @@ function LoginButton({ isMobile = false, isLoggedIn, onLoginStatusChange }) {
     window.location.href = 'http://localhost:5001/auth/google' // 구글 OAuth 로그인 시작
   }
 
-  // 로그아웃 요청 
+  // 로그아웃 요청
   const handleLogoutClick = async () => {
     try {
       // 로그아웃 요청을 보내고 상태를 업데이트
-      await axios.post('http://localhost:5001/auth/logout', {}, {
-        withCredentials: true, // 쿠키를 포함한 요청 전송
-      });
-      localStorage.removeItem('accessToken'); 
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('googleId'); 
-      onLoginStatusChange(false); // 로그아웃 상태로 변경
+      await axios.post(
+        'http://localhost:5001/auth/logout',
+        {},
+        {
+          withCredentials: true, // 쿠키를 포함한 요청 전송
+        },
+      )
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
+      localStorage.removeItem('googleId')
+      onLoginStatusChange(false) // 로그아웃 상태로 변경
     } catch (error) {
       console.error('Logout failed:', error)
     }
@@ -340,9 +344,9 @@ const MenuNavItem = forwardRef(
     ref,
   ) => {
     let isActive = usePathname() === link.href
-    let href = link.href;
+    let href = link.href
     if (link.name === 'Chatbot' && googleId) {
-      href = `/chatbot/${googleId}`; // 'Chatbot' 링크에 googleId 추가
+      href = `/chatbot/${googleId}` // 'Chatbot' 링크에 googleId 추가
     }
 
     return (
@@ -369,9 +373,9 @@ MenuNavItem.displayName = 'MenuNavItem'
 // 데스크탑 네비게이션 항목 컴포넌트
 function DesktopNavItem({ link, googleId }) {
   let isActive = usePathname() === link.href
-  let href = link.href;
+  let href = link.href
   if (link.name === 'Chatbot' && googleId) {
-    href = `/chatbot/${googleId}`; // 'Chatbot' 링크에 googleId 추가
+    href = `/chatbot/${googleId}` // 'Chatbot' 링크에 googleId 추가
   }
 
   return (
@@ -397,12 +401,12 @@ export default function Navbar() {
     const urlParams = new URLSearchParams(window.location.search)
     const accessToken = urlParams.get('accessToken')
     const refreshToken = urlParams.get('refreshToken')
-    const googleId = urlParams.get('googleId');
+    const googleId = urlParams.get('googleId')
 
     if (accessToken && refreshToken && googleId) {
-      localStorage.setItem('accessToken', accessToken)  
+      localStorage.setItem('accessToken', accessToken)
       localStorage.setItem('refreshToken', refreshToken)
-      localStorage.setItem('googleId', googleId);  
+      localStorage.setItem('googleId', googleId)
 
       // URL에서 토큰을 제거하여 깨끗한 URL 유지
       window.history.replaceState({}, document.title, '/')
@@ -417,14 +421,14 @@ export default function Navbar() {
     try {
       const response = await axios.get('http://localhost:5001/auth/status', {
         headers: {
-          'Authorization': `Bearer ${accessToken}`, // 액세스 토큰을 Authorization 헤더에 포함
+          Authorization: `Bearer ${accessToken}`, // 액세스 토큰을 Authorization 헤더에 포함
         },
         withCredentials: true, // 쿠키를 포함한 요청 전송
       })
-      setIsLoggedIn(response.data.loggedIn || false)  // 로그인 상태 업데이트
+      setIsLoggedIn(response.data.loggedIn || false) // 로그인 상태 업데이트
     } catch (error) {
       console.error('Failed to check authentication status:', error)
-      setIsLoggedIn(false)  // 오류 발생 시 로그인 상태를 false로 설정
+      setIsLoggedIn(false) // 오류 발생 시 로그인 상태를 false로 설정
     }
   }
 
