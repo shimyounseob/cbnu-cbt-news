@@ -44,7 +44,7 @@ export default function HomePage() {
             />
             {/* <SidebarTags /> */}
             <SidebarSocialLinks />
-            <SidebarInstagramFeed />
+            {/* <SidebarInstagramFeed /> */}
           </div>
         </div>
       </section>

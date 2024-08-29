@@ -11,7 +11,7 @@ import {
 import Image from 'next/image'
 
 function Chatbot({ googleId }) {
-  console.log('Google ID: ', googleId) // Google ID가 제대로 전달되는지 콘솔에서 확인하기
+  console.log('Google ID: ', googleId) 
 
   const [rooms, setRooms] = useState([]) // 채팅방 목록 상태
   const [currentRoom, setCurrentRoom] = useState(null) // 현재 선택된 채팅방
@@ -34,7 +34,7 @@ function Chatbot({ googleId }) {
           setCurrentRoom(data[0]._id) // 첫 번째 채팅방을 기본으로 선택하기
         }
       } catch (error) {
-        console.error('Error fetching rooms:', error) // 오류 발생 시 콘솔에 출력하기
+        console.error('Error fetching rooms:', error) 
       }
     }
 
