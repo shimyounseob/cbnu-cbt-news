@@ -128,15 +128,15 @@ def train_chatbot():
 #             complete_response += token
 #         return complete_response
 
-# Django 명령어를 정의하는 클래스
-class Command(BaseCommand):
-    help = "Train the chatbot using articles from the database and provide responses."
+# # Django 명령어를 정의하는 클래스
+# class Command(BaseCommand):
+#     help = "Train the chatbot using articles from the database and provide responses."
 
-    def handle(self, *args, **options):
-        # 벡터 스토어 학습
-        vector_store = train_chatbot()
+#     def handle(self, *args, **options):
+#         # 벡터 스토어 학습
+#         vector_store = train_chatbot()
 
-        # 예시 질문에 대한 응답 생성
-        example_question = "summarize news article The Biggest Israeli Protest Over Judicial Overhaul."
-        response = get_response(example_question)
-        print(response)
+#         # 예시 질문에 대한 응답 생성
+#         example_question = "summarize news article The Biggest Israeli Protest Over Judicial Overhaul."
+#         response = get_response(example_question)
+#         print(response)

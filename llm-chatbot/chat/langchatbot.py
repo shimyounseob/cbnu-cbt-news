@@ -8,8 +8,6 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain import hub
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.schema import Document
 
 # .env 파일에서 환경 변수 로드
 load_dotenv()
@@ -19,20 +17,6 @@ logging.basicConfig(level=logging.INFO)
 
 # OpenAI API 키 설정
 openai_api_key = os.getenv('OPENAI_API_KEY')
-
-# 문서를 청크로 분할하는 함수
-def split_articles(contents):
-    """
-    텍스트를 청크로 분할합니다.
-    """
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-    
-    documents = []
-    for content in contents:
-        content_chunks = splitter.split_text(content)
-        for chunk in content_chunks:
-            documents.append(Document(page_content=chunk))
-    return documents
 
 # 사용자 입력에 대한 응답 생성
 def get_response(user_input):
@@ -48,14 +32,7 @@ def get_response(user_input):
     
     # 사용자 입력과 관련된 문서 검색
     results = retriever.get_relevant_documents(user_input)
-    
-    # 검색된 문서의 내용을 청크로 분할
-    if results:
-        contents = [doc.page_content for doc in results]
-        documents = split_articles(contents)
-        context = " ".join([doc.page_content for doc in documents])
-    else:
-        context = "No relevant information found."
+    context = results[0].page_content if results else "No relevant information found."
     
     # LLM 초기화 및 프롬프트 설정
     llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, openai_api_key=openai_api_key)
@@ -71,4 +48,5 @@ def get_response(user_input):
     
     # 응답 생성 및 반환
     response = rag_chain.invoke({"context": context, "question": user_input})
+    logging.info(f"Generated response: {response}")
     return response
