@@ -9,9 +9,10 @@ import {
   TrashIcon,
 } from '@heroicons/react/20/solid'
 import Image from 'next/image'
+import Modal from '../ui/modal' // 모달 컴포넌트 import
 
 function Chatbot({ googleId }) {
-  console.log('Google ID: ', googleId) 
+  console.log('Google ID: ', googleId)
 
   const [rooms, setRooms] = useState([]) // 채팅방 목록 상태
   const [currentRoom, setCurrentRoom] = useState(null) // 현재 선택된 채팅방
@@ -19,6 +20,68 @@ function Chatbot({ googleId }) {
   const [messages, setMessages] = useState([]) // 채팅 메시지 상태
   const [message, setMessage] = useState('') // 현재 입력된 메시지
   const [socket, setSocket] = useState(null) // WebSocket 연결 상태
+
+  const [isModalOpen, setIsModalOpen] = useState(false) // 이름 수정 모달 열림 상태
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false) // 삭제 확인 모달 열림 상태
+  const [modalRoomId, setModalRoomId] = useState(null) // 모달에서 수정할 채팅방 ID
+  const [newRoomName, setNewRoomName] = useState('') // 새 채팅방 이름 상태
+  const [roomToDelete, setRoomToDelete] = useState(null) // 삭제할 채팅방 상태
+
+  // 모달을 열기 위한 함수
+  const openModal = (roomId, currentName) => {
+    setModalRoomId(roomId)
+    setNewRoomName(currentName) // 현재 이름을 기본값으로 설정
+    setIsModalOpen(true) // 모달 열기
+  }
+
+  // 삭제 모달 열기 위한 함수
+  const openDeleteModal = (roomId) => {
+    setRoomToDelete(roomId) // 삭제할 채팅방 설정
+    setIsDeleteModalOpen(true) // 삭제 확인 모달 열기
+  }
+
+  // 모달을 닫기 위한 함수
+  const closeModal = () => {
+    setIsModalOpen(false) // 모달 닫기
+    setNewRoomName('') // 이름 초기화
+  }
+
+  // 삭제 확인 모달 닫기
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false) // 삭제 확인 모달 닫기
+    setRoomToDelete(null) // 삭제할 채팅방 초기화
+  }
+
+  // 모달을 통해 채팅방 이름 수정 처리
+  const handleEditRoomName = async () => {
+    if (!newRoomName.trim()) return
+    try {
+      const response = await fetch(
+        `http://localhost:5001/chatRoom/${modalRoomId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ roomName: newRoomName }), // 새 이름 전송
+        },
+      )
+
+      if (response.ok) {
+        setRooms(
+          rooms.map(
+            (room) =>
+              room._id === modalRoomId
+                ? { ...room, roomName: newRoomName }
+                : room, // 이름 수정
+          ),
+        )
+        closeModal() // 모달 닫기
+      }
+    } catch (error) {
+      console.error('Error updating room name:', error)
+    }
+  }
 
   // 채팅방 목록을 가져오기
   useEffect(() => {
@@ -34,7 +97,7 @@ function Chatbot({ googleId }) {
           setCurrentRoom(data[0]._id) // 첫 번째 채팅방을 기본으로 선택하기
         }
       } catch (error) {
-        console.error('Error fetching rooms:', error) 
+        console.error('Error fetching rooms:', error)
       }
     }
 
@@ -50,26 +113,30 @@ function Chatbot({ googleId }) {
         if (currentRoom) {
           const response = await fetch(
             `http://localhost:5001/messages/${currentRoom}`,
-          ); // 현재 채팅방에 해당하는 메시지 가져오기
-          const data = await response.json();
-          console.log('Fetched messages:', data); // 가져온 메시지 콘솔에서 확인하기
-          setMessages(data.map((msg) => ({
-            text: msg.message,
-            isUser: msg.sender !== "GPT", // sender가 GPT인지 아닌지만 비교하기
-          }))); // 가져온 메시지를 상태에 설정하기
+          ) // 현재 채팅방에 해당하는 메시지 가져오기
+          const data = await response.json()
+          console.log('Fetched messages:', data) // 가져온 메시지 콘솔에서 확인하기
+          setMessages(
+            data.map((msg) => ({
+              text: msg.message,
+              isUser: msg.sender !== 'GPT', // sender가 GPT인지 아닌지만 비교하기
+            })),
+          ) // 가져온 메시지를 상태에 설정하기
         }
       } catch (error) {
-        console.error('Error fetching messages:', error); // 오류 발생 시 콘솔에 출력하기
+        console.error('Error fetching messages:', error) // 오류 발생 시 콘솔에 출력하기
       }
     }
 
-    fetchMessages(); // 메시지 가져오기 함수 호출하기
-  }, [currentRoom]); // currentRoom이 변경될 때마다 실행되도록 설정하기
+    fetchMessages() // 메시지 가져오기 함수 호출하기
+  }, [currentRoom]) // currentRoom이 변경될 때마다 실행되도록 설정하기
 
   // WebSocket 연결 설정
   useEffect(() => {
     if (currentRoom) {
-      console.log(`Connecting WebSocket to ws://127.0.0.1:8000/ws/chat/${googleId}/${currentRoom}/`)
+      console.log(
+        `Connecting WebSocket to ws://127.0.0.1:8000/ws/chat/${googleId}/${currentRoom}/`,
+      )
       const ws = new WebSocket(
         `ws://127.0.0.1:8000/ws/chat/${googleId}/${currentRoom}/`,
       ) // googleId와 현재 채팅방을 기반으로 WebSocket 연결 설정하기
@@ -147,36 +214,10 @@ function Chatbot({ googleId }) {
     }
   }
 
-  // 채팅방 이름 수정
-  const handleEditRoomName = async (id) => {
-    const newName = prompt('Enter the new room name:') // 새로운 채팅방 이름 입력받기
-    if (newName) {
-      try {
-        const response = await fetch(`http://localhost:5001/chatRoom/${id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ roomName: newName }), // 채팅방 이름 수정 요청 보내기
-        })
-
-        if (response.ok) {
-          setRooms(
-            rooms.map((room) =>
-              room._id === id ? { ...room, roomName: newName } : room, // 채팅방 이름을 업데이트하기
-            ),
-          )
-        }
-      } catch (error) {
-        console.error('Error updating room name:', error) // 채팅방 이름 수정 중 오류 발생 시 로그 출력하기
-      }
-    }
-  }
-
   // 채팅방 삭제
-  const handleDeleteRoom = async (id) => {
-    const confirmed = confirm('Are you sure you want to delete this room?') // 채팅방 삭제 확인받기
-    if (confirmed) {
+  const handleDeleteRoom = async () => {
+    const id = roomToDelete; // 삭제할 방 ID
+    if (id) {
       try {
         const response = await fetch(`http://localhost:5001/chatRoom/${id}`, {
           method: 'DELETE',
@@ -185,6 +226,7 @@ function Chatbot({ googleId }) {
         if (response.ok) {
           setRooms(rooms.filter((room) => room._id !== id)) // 삭제된 채팅방을 목록에서 제거하기
           setCurrentRoom(rooms.length > 0 ? rooms[0]._id : null) // 남은 채팅방 중 첫 번째 채팅방을 현재 채팅방으로 설정하기
+          closeDeleteModal() // 삭제 모달 닫기
         }
       } catch (error) {
         console.error('Error deleting room:', error) // 채팅방 삭제 중 오류 발생 시 로그 출력하기
@@ -194,6 +236,51 @@ function Chatbot({ googleId }) {
 
   return (
     <div className="flex h-screen flex-col bg-gray-100">
+      {/* 모달 컴포넌트 추가 */}
+      <Modal
+        isOpen={isModalOpen}
+        closeModal={closeModal}
+        title="Edit Room Name"
+      >
+        <input
+          type="text"
+          value={newRoomName}
+          onChange={(e) => setNewRoomName(e.target.value)} // 입력된 이름 업데이트
+          className="w-full rounded-md border p-2"
+        />
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={handleEditRoomName}
+            className="rounded-lg bg-[#b42258] px-4 py-2 text-white hover:bg-[#991d4a]"
+          >
+            Save
+          </button>
+        </div>
+      </Modal>
+
+      {/* 삭제 확인 모달 추가 */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        closeModal={closeDeleteModal}
+        title="Delete Room"
+      >
+        <p>Are you sure you want to delete this room?</p>
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={closeDeleteModal}
+            className="mr-2 rounded-lg bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleDeleteRoom}
+            className="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+          >
+            Delete
+          </button>
+        </div>
+      </Modal>
+
       <div className="flex flex-1 overflow-hidden">
         {isSidebarOpen ? (
           <div className="w-full max-w-[260px] border-r bg-gray-100 p-4 pt-5 transition-all duration-700">
@@ -226,28 +313,21 @@ function Chatbot({ googleId }) {
                       className="flex cursor-pointer items-center justify-between p-2 hover:bg-gray-200"
                       onClick={() => setCurrentRoom(room._id)} // 클릭 시 현재 채팅방을 설정하기
                     >
-                      <input
-                        type="text"
-                        value={room.roomName}
-                        onChange={(e) =>
-                          handleEditRoomName(room._id, e.target.value) // 채팅방 이름 수정 처리하기
-                        }
-                        className="truncate border-none bg-transparent text-sm focus:outline-none"
-                      />
+                      <span>{room.roomName}</span>
                       <div className="flex space-x-2">
                         <PencilIcon
                           className="h-4 w-4 text-gray-600"
-                          onClick={() => handleEditRoomName(room._id)} // 채팅방 이름 수정 버튼 클릭 시 처리하기
+                          onClick={() => openModal(room._id, room.roomName)} // 이름 수정 모달 열기
                         />
                         <TrashIcon
                           className="h-4 w-4 text-gray-600"
-                          onClick={() => handleDeleteRoom(room._id)} // 채팅방 삭제 버튼 클릭 시 처리하기
+                          onClick={() => openDeleteModal(room._id)} // 삭제 확인 모달 열기
                         />
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p>No chat rooms available.</p> // 채팅방이 없을 경우 메시지 표시하기
+                  <p>No chat rooms available.</p>
                 )}
                 <button
                   className="mt-4 flex w-full items-center justify-center rounded bg-gray-200 p-2 text-sm font-medium text-gray-600 hover:bg-gray-300"
@@ -262,7 +342,7 @@ function Chatbot({ googleId }) {
         ) : (
           <button
             className="p-2 focus:outline-none"
-            onClick={() => setIsSidebarOpen(true)} // 사이드바 열기 버튼 클릭 시 처리하기
+            onClick={() => setIsSidebarOpen(true)} // 사이드바 열기
           >
             <ChevronRightIcon className="h-6 w-6 text-gray-600" />
           </button>

@@ -8,7 +8,10 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import clsx from 'clsx'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 import { useRouter } from 'next/navigation'
-import axios from '../../libs/axios' // 수정된 Axios 경로
+import axios from '../../libs/axios'
+
+// 모달 컴포넌트 추가
+import Modal from '../ui/modal'
 
 // 로고 이미지를 가져오기
 import logo from '/public/images/the_chungbuk_times.png'
@@ -129,7 +132,7 @@ function Dropdown({ name, subMenu }) {
 }
 
 // 데스크탑 네비게이션 컴포넌트
-function DesktopNavigation() {
+function DesktopNavigation({ isLoggedIn, openLoginModal }) {
   const [googleId, setGoogleId] = useState(null)
 
   useEffect(() => {
@@ -152,6 +155,8 @@ function DesktopNavigation() {
             key={`desktop-link-${index}`}
             link={link}
             googleId={googleId} // googleId를 DesktopNavItem에 전달
+            isLoggedIn={isLoggedIn}
+            openLoginModal={openLoginModal}
           />
         ),
       )}
@@ -194,7 +199,7 @@ function HamburgerButton({ open }) {
 }
 
 // 모바일 메뉴 컴포넌트
-function MobileMenu({ isLoggedIn, onLoginStatusChange }) {
+function MobileMenu({ isLoggedIn, onLoginStatusChange, openLoginModal }) {
   return (
     <Transition
       enter="transition duration-300 ease-out"
@@ -234,6 +239,8 @@ function MobileMenu({ isLoggedIn, onLoginStatusChange }) {
                       link={link}
                       key={`mobile-menu-link-${index}`}
                       close={close}
+                      isLoggedIn={isLoggedIn}
+                      openLoginModal={openLoginModal}
                     />
                   )
                 }
@@ -340,13 +347,20 @@ const MenuNavItem = forwardRef(
       activeTextColorClassName = 'text-gray-800',
       close,
       googleId, // googleId를 MenuNavItem에 전달
+      isLoggedIn,
+      openLoginModal, // 모달 열기 함수 전달
     },
     ref,
   ) => {
     let isActive = usePathname() === link.href
     let href = link.href
-    if (link.name === 'Chatbot' && googleId) {
-      href = `/chatbot/${googleId}` // 'Chatbot' 링크에 googleId 추가
+
+    // 'Chatbot' 링크 처리
+    const handleChatbotClick = (e) => {
+      if (!isLoggedIn && link.name === 'Chatbot') {
+        e.preventDefault() // 로그인이 안 된 경우, 기본 링크 이동 방지
+        openLoginModal() // 모달 창 열기
+      }
     }
 
     return (
@@ -360,7 +374,10 @@ const MenuNavItem = forwardRef(
             ? 'bg-gray-50 text-red-700'
             : `${activeTextColorClassName} transition duration-300 ease-in-out hover:bg-gray-50 hover:text-red-700`,
         )}
-        onClick={close}
+        onClick={(e) => {
+          handleChatbotClick(e) // Chatbot 버튼 클릭 처리
+          close && close() // 메뉴 닫기 (모바일용)
+        }}
       >
         {link.name}
       </Link>
@@ -371,11 +388,19 @@ const MenuNavItem = forwardRef(
 MenuNavItem.displayName = 'MenuNavItem'
 
 // 데스크탑 네비게이션 항목 컴포넌트
-function DesktopNavItem({ link, googleId }) {
+function DesktopNavItem({ link, googleId, isLoggedIn, openLoginModal }) {
   let isActive = usePathname() === link.href
   let href = link.href
   if (link.name === 'Chatbot' && googleId) {
     href = `/chatbot/${googleId}` // 'Chatbot' 링크에 googleId 추가
+  }
+
+  // 'Chatbot' 클릭 시 처리
+  const handleChatbotClick = (e) => {
+    if (!isLoggedIn && link.name === 'Chatbot') {
+      e.preventDefault() // 로그인이 안 된 경우, 기본 링크 이동 방지
+      openLoginModal() // 모달 창 열기
+    }
   }
 
   return (
@@ -387,6 +412,7 @@ function DesktopNavItem({ link, googleId }) {
           ? 'text-red-700'
           : 'text-gray-800 transition duration-300 ease-in-out hover:text-red-700',
       )}
+      onClick={handleChatbotClick} // Chatbot 클릭 처리
     >
       {link.name}
     </Link>
@@ -396,6 +422,7 @@ function DesktopNavItem({ link, googleId }) {
 // 최종적으로 네비게이션 바를 렌더링
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
@@ -432,6 +459,14 @@ export default function Navbar() {
     }
   }
 
+  const openLoginModal = () => {
+    setIsModalOpen(true)
+  }
+
+  const closeLoginModal = () => {
+    setIsModalOpen(false)
+  }
+
   return (
     <Disclosure as="header" className="relative">
       {({ open }) => (
@@ -440,7 +475,7 @@ export default function Navbar() {
             <nav className="mx-auto flex h-20 max-w-7xl items-center bg-white px-4 sm:px-6 lg:border-0 lg:px-8">
               <div className="flex w-full items-center justify-between">
                 <Logo />
-                <DesktopNavigation />
+                <DesktopNavigation isLoggedIn={isLoggedIn} openLoginModal={openLoginModal} />
                 <Search />
                 <div className="hidden md:flex">
                   <LoginButton
@@ -455,7 +490,20 @@ export default function Navbar() {
           <MobileMenu
             isLoggedIn={isLoggedIn}
             onLoginStatusChange={setIsLoggedIn}
+            openLoginModal={openLoginModal}
           />
+          {/* 로그인 모달 */}
+          <Modal isOpen={isModalOpen} closeModal={closeLoginModal} title="Login Required">
+            <p className="text-gray-700">You need to log in to access this feature.</p>
+            <div className="mt-4">
+              <button
+                onClick={() => window.location.href = 'http://localhost:5001/auth/google'}
+                className="w-full rounded-full bg-[#b92555] px-4 py-2 text-white transition hover:bg-[#9b2049]"
+              >
+                Proceed to Login
+              </button>
+            </div>
+          </Modal>
         </>
       )}
     </Disclosure>

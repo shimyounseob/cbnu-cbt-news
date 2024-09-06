@@ -202,6 +202,12 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "Article not found" });
     }
 
+    // 조회수 1 증가 처리
+    await db.Article.update(
+      { view_count: article.view_count + 1 }, 
+      { where: { id: req.params.id } } 
+    );
+
     res.json(article);
   } catch (error) {
     console.error(error);

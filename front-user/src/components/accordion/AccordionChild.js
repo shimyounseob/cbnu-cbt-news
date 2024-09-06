@@ -13,6 +13,7 @@ import {
 } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import clsx from 'clsx';
+import Modal from '../ui/modal'; // 모달 컴포넌트 import
 
 export default function AccordionChild() {
   const [googleId, setGoogleId] = useState(null); // Google ID 상태
@@ -23,6 +24,12 @@ export default function AccordionChild() {
   const [messages, setMessages] = useState([]); // 채팅 메시지 상태
   const [message, setMessage] = useState(''); // 현재 입력된 메시지
   const [socket, setSocket] = useState(null); // WebSocket 연결 상태
+
+  // 모달 상태 및 입력 처리
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 이름 수정 모달 상태
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // 삭제 확인 모달 상태
+  const [modalRoomId, setModalRoomId] = useState(null); // 모달에서 사용할 채팅방 ID
+  const [newRoomName, setNewRoomName] = useState(''); // 새 채팅방 이름 상태
 
   // 로컬 스토리지에서 Google ID 가져오기
   useEffect(() => {
@@ -173,52 +180,90 @@ export default function AccordionChild() {
   };
 
   // 채팅방 이름 수정
-  const handleEditRoomName = async (id) => {
-    const newName = prompt('Enter the new room name:'); // 새로운 채팅방 이름 입력받기
-    if (newName) {
-      try {
-        const response = await fetch(`http://localhost:5001/chatRoom/${id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ roomName: newName }), // 채팅방 이름 수정 요청 보내기
-        });
+  const openEditModal = (roomId, currentName) => {
+    setModalRoomId(roomId);
+    setNewRoomName(currentName);
+    setIsEditModalOpen(true);
+  };
 
-        if (response.ok) {
-          setRooms(
-            rooms.map((room) =>
-              room._id === id ? { ...room, roomName: newName } : room, // 채팅방 이름을 업데이트하기
-            ),
-          );
-        }
-      } catch (error) {
-        console.error('Error updating room name:', error); // 채팅방 이름 수정 중 오류 발생 시 로그 출력하기
+  const handleEditRoomName = async () => {
+    if (newRoomName.trim() === '') return;
+    try {
+      const response = await fetch(`http://localhost:5001/chatRoom/${modalRoomId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ roomName: newRoomName }), // 채팅방 이름 수정 요청 보내기
+      });
+
+      if (response.ok) {
+        setRooms(
+          rooms.map((room) =>
+            room._id === modalRoomId ? { ...room, roomName: newRoomName } : room, // 채팅방 이름을 업데이트하기
+          ),
+        );
+        setIsEditModalOpen(false); // 수정 완료 후 모달 닫기
       }
+    } catch (error) {
+      console.error('Error updating room name:', error); // 채팅방 이름 수정 중 오류 발생 시 로그 출력하기
     }
   };
 
   // 채팅방 삭제
-  const handleDeleteRoom = async (id) => {
-    const confirmed = confirm('Are you sure you want to delete this room?'); // 채팅방 삭제 확인받기
-    if (confirmed) {
-      try {
-        const response = await fetch(`http://localhost:5001/chatRoom/${id}`, {
-          method: 'DELETE',
-        });
+  const openDeleteModal = (roomId) => {
+    setModalRoomId(roomId);
+    setIsDeleteModalOpen(true);
+  };
 
-        if (response.ok) {
-          setRooms(rooms.filter((room) => room._id !== id)); // 삭제된 채팅방을 목록에서 제거하기
-          setCurrentRoom(rooms.length > 0 ? rooms[0]._id : null); // 남은 채팅방 중 첫 번째 채팅방을 현재 채팅방으로 설정하기
-        }
-      } catch (error) {
-        console.error('Error deleting room:', error); // 채팅방 삭제 중 오류 발생 시 로그 출력하기
+  const handleDeleteRoom = async () => {
+    try {
+      const response = await fetch(`http://localhost:5001/chatRoom/${modalRoomId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setRooms(rooms.filter((room) => room._id !== modalRoomId)); // 삭제된 채팅방을 목록에서 제거하기
+        setCurrentRoom(rooms.length > 0 ? rooms[0]._id : null); // 남은 채팅방 중 첫 번째 채팅방을 현재 채팅방으로 설정하기
+        setIsDeleteModalOpen(false); // 삭제 완료 후 모달 닫기
       }
+    } catch (error) {
+      console.error('Error deleting room:', error); // 채팅방 삭제 중 오류 발생 시 로그 출력하기
     }
   };
 
   return (
     <div className="fixed bottom-4 right-4 w-96 bg-white shadow-lg rounded-lg overflow-hidden z-50">
+      {/* 모달 컴포넌트 추가 */}
+      <Modal isOpen={isEditModalOpen} closeModal={() => setIsEditModalOpen(false)} title="Edit Room Name">
+        <input
+          type="text"
+          value={newRoomName}
+          onChange={(e) => setNewRoomName(e.target.value)} // 입력된 이름 업데이트
+          className="w-full rounded-md border p-2"
+        />
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={handleEditRoomName}
+            className="rounded-lg bg-[#b42258] px-4 py-2 text-white hover:bg-[#991d4a]"
+          >
+            Save
+          </button>
+        </div>
+      </Modal>
+
+      <Modal isOpen={isDeleteModalOpen} closeModal={() => setIsDeleteModalOpen(false)} title="Confirm Delete">
+        <p>Are you sure you want to delete this room?</p>
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={handleDeleteRoom}
+            className="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+          >
+            Delete
+          </button>
+        </div>
+      </Modal>
+
       {/* 아코디언 헤더 */}
       <div className="flex justify-between items-center p-4 bg-[#b42258] text-white cursor-pointer">
         {/* 좌우 Chevron 버튼 */}
@@ -261,22 +306,15 @@ export default function AccordionChild() {
                         setIsChattingRoom(false); // 클릭 시 메시지 섹션으로 전환
                       }}
                     >
-                      <input
-                        type="text"
-                        value={room.roomName}
-                        onChange={(e) =>
-                          handleEditRoomName(room._id, e.target.value) // 채팅방 이름 수정 처리하기
-                        }
-                        className="truncate border-none bg-transparent text-sm focus:outline-none"
-                      />
+                      <span>{room.roomName}</span>
                       <div className="flex space-x-2">
                         <PencilIcon
                           className="h-4 w-4 text-gray-600"
-                          onClick={() => handleEditRoomName(room._id)} // 채팅방 이름 수정 버튼 클릭 시 처리하기
+                          onClick={() => openEditModal(room._id, room.roomName)} // 채팅방 이름 수정 모달 열기
                         />
                         <TrashIcon
                           className="h-4 w-4 text-gray-600"
-                          onClick={() => handleDeleteRoom(room._id)} // 채팅방 삭제 버튼 클릭 시 처리하기
+                          onClick={() => openDeleteModal(room._id)} // 삭제 확인 모달 열기
                         />
                       </div>
                     </div>

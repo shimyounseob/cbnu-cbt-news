@@ -33,73 +33,79 @@ var upload = multer({ storage: storage });
 // 호출주소: http://localhost:3000/article/list
 // 호출방식: Get
 // 응답결과: 전체 게시글 목록이 포함된 웹페이지 반환
-router.get("/list",isLoggined, async (req, res) => {
+router.get("/list", isLoggined, async (req, res) => {
   try {
-      const { title, publication_issue, writer_id, page = 1 } = req.query;
+    const { title, publication_issue, writer_id, page = 1 } = req.query;
 
-      // 한 페이지에 표시할 게시글 수
-      const limit = 10;
-      const offset = (page - 1) * limit;
+    // 한 페이지에 표시할 게시글 수
+    const limit = 10;
+    const offset = (page - 1) * limit;
 
-      // 기본 조건 설정
-      const whereClause = {};
+    // 기본 조건 설정
+    const whereClause = {};
 
-      if (title) {
-          whereClause.title = { [Op.like]: `%${title}%` };
-      }
+    if (title) {
+      whereClause.title = { [Op.like]: `%${title}%` };
+    }
 
-      if (publication_issue) {
-          whereClause.publication_issue = publication_issue;
-      }
+    if (publication_issue) {
+      whereClause.publication_issue = publication_issue;
+    }
 
-      const includeOptions = [
-          {
-              model: db.Writer,
-              as: "writer",
-              attributes: ["id", "english_name"],
-              through: {
-                  where: {
-                      role: "main",
-                  },
-              },
+    const includeOptions = [
+      {
+        model: db.Writer,
+        as: "writer",
+        attributes: ["id", "english_name"],
+        through: {
+          where: {
+            role: "main",
           },
-      ];
+        },
+      },
+    ];
 
-      if (writer_id && writer_id !== "all") {
-          includeOptions[0].where = { id: writer_id };
-      }
+    // 기자명 필터 적용
+    if (writer_id && writer_id !== "all") {
+      includeOptions[0].where = { id: writer_id };
+    }
 
-      // 전체 게시글 개수 가져오기
-      const totalArticles = await db.Article.count({ where: whereClause });
+    // 전체 게시글 개수 가져오기 (기자명 필터 포함)
+    const totalArticles = await db.Article.count({
+      where: whereClause,
+      include: includeOptions, // 기자명 필터 적용
+    });
 
-      // 전체 게시글 목록 조회하기, 최신 발간호 순으로 정렬
-      const articles = await db.Article.findAll({
-          where: whereClause,
-          include: includeOptions,
-          limit,
-          offset,
-          order: [['publication_issue', 'DESC']],
-      });
+    // 전체 게시글 목록 조회하기, 최신 발간호 순으로 정렬
+    const articles = await db.Article.findAll({
+      where: whereClause,
+      include: includeOptions,
+      limit,
+      offset,
+      order: [["publication_issue", "DESC"]],
+    });
 
-      const totalPages = Math.ceil(totalArticles / limit);
+    // 페이지 수 계산
+    const totalPages = Math.ceil(totalArticles / limit);
 
-      const writers = await db.Writer.findAll({
-          attributes: ["id", "english_name"],
-          where: { used_yn_code: 1 },
-      });
+    const writers = await db.Writer.findAll({
+      attributes: ["id", "english_name"],
+      where: { used_yn_code: 1 },
+    });
 
-      const searchOption = { title, publication_issue, writer_id };
+    const searchOption = { title, publication_issue, writer_id };
 
-      res.render("article/list.ejs", { 
-          articles, 
-          writers, 
-          searchOption, 
-          totalPages, 
-          currentPage: parseInt(page) 
-      });
+    res.render("article/list.ejs", {
+      
+      articles,
+      writers,
+      searchOption,
+      totalPages,
+      currentPage: parseInt(page),
+    });
   } catch (error) {
-      console.error(error);
-      res.status(500).send("Internal Server Error");
+    console.error(error);
+    res.status(500).send("Internal Server Error");
   }
 });
 
