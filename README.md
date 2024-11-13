@@ -26,9 +26,17 @@ LLM 챗봇 기능이 포함된 충북대학교 신문사 홈페이지 + 관리�
 
 ---
 
+![심윤섭-몰입결과보고서_6](https://github.com/user-attachments/assets/7de68afb-9012-4e6a-9940-baa0cba16880)
+![심윤섭-몰입결과보고서_5](https://github.com/user-attachments/assets/278c4833-4b74-486a-af28-7613a44a9b1d)
 
 
 
+![심윤섭-몰입결과보고서_12](https://github.com/user-attachments/assets/bbe4536a-c0b3-4051-9818-575fbc301f8d)
+![심윤섭-몰입결과보고서_11](https://github.com/user-attachments/assets/b2b55c25-3125-4fbd-86b8-360e002cd608)
+![심윤섭-몰입결과보고서_10](https://github.com/user-attachments/assets/897ddf4c-2f5b-4511-8921-30a0aaa63b7e)
+![심윤섭-몰입결과보고서_9](https://github.com/user-attachments/assets/fa771542-2d38-4fc7-8486-c6697db56757)
+![심윤섭-몰입결과보고서_8](https://github.com/user-attachments/assets/2a9a705c-2933-4747-91a4-9f63a04fb8bf)
+![심윤섭-몰입결과보고서_7](https://github.com/user-attachments/assets/4c952756-9470-490b-8fa9-53bc2137359f)
 
 ---
 
